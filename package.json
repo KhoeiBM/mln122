@@ -1,5 +1,5 @@
 {
-  "name": "thi-truong-va-loi-ich",
+  "name": "sap-122",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -10,8 +10,8 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@fontsource/barlow-condensed": "^5.3.0",
     "@fontsource/be-vietnam-pro": "^5.3.0",
-    "@fontsource/dm-serif-display": "^5.3.0",
     "lucide-react": "^0.468.0",
     "next": "^16.4.5",
     "react": "^19.0.0",
@@ -22,5 +22,6 @@
     "@testing-library/react": "^16.3.3",
     "jsdom": "^26.1.0",
     "vitest": "^5.1.0"
-  }
+  },
+  "description": "Sạp 122 — trang chủ và phòng học tương tác cho môn MLN122 (Kinh tế chính trị Mác – Lênin), Next.js và component tự viết."
 }
