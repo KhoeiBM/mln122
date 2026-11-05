@@ -1,11 +1,11 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { STORAGE_KEY, emptyProgress, migrate } from './progress';
+import { STORAGE_KEY, emptyProgress, migrate } from './split';
 
-// Đọc/ghi tiến độ trong localStorage. Trạng thái đầu tiên luôn rỗng để HTML server
-// và HTML client khớp nhau; dữ liệu thật được nạp sau khi mount.
-export function useProgress() {
+// Đọc/ghi cách chia trong localStorage. Lần render đầu luôn rỗng để HTML server và
+// HTML client khớp nhau; dữ liệu thật được nạp sau khi mount.
+export function useSplit() {
   const [progress, setProgress] = useState(emptyProgress);
   const [ready, setReady] = useState(false);
 
@@ -28,10 +28,7 @@ export function useProgress() {
     }
   }, [progress, ready]);
 
-  const update = useCallback((updater) => {
-    setProgress((current) => updater(current));
-  }, []);
-
+  const update = useCallback((updater) => setProgress((current) => updater(current)), []);
   const reset = useCallback(() => setProgress(emptyProgress()), []);
 
   return { progress, ready, update, reset };

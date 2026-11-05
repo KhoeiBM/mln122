@@ -1,5 +1,5 @@
 {
-  "name": "chon-duong",
+  "name": "boc-gia",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -22,5 +22,5 @@
     "jsdom": "^26.1.0",
     "vitest": "^5.1.0"
   },
-  "description": "Chọn đường — hai mốc lịch sử kinh tế Việt Nam và hai kịch bản quyết định cho môn MLN122 (Kinh tế chính trị Mác – Lênin), Đại học FPT. Next.js, không dùng UI kit."
+  "description": "Bóc giá — chia giá bán của một món hàng thành c, v, m cho môn MLN122 (Kinh tế chính trị Mác – Lênin), Đại học FPT. Next.js, không dùng UI kit."
 }

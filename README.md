@@ -1,12 +1,12 @@
-# Chọn đường — một quyết định, nhiều góc nhìn
+# Bóc giá — một món hàng, ai lấy phần nào?
 
-Sản phẩm web cho môn **MLN122 – Kinh tế chính trị Mác – Lênin** (Đại học FPT). Người học đọc hai
-mốc lịch sử kinh tế Việt Nam, rồi ngồi vào ghế người phải quyết định trong hai kịch bản thực tiễn:
-mở hệ quả của ba phương án, chọn một, xem cùng quyết định đó từ ba phía và viết phản biện bằng
-phạm trù của môn học.
+Sản phẩm web cho môn **MLN122 – Kinh tế chính trị Mác – Lênin** (Đại học FPT). Người học chia giá
+bán của một món quen thành bảy khoản (nguyên liệu, máy móc, mặt bằng, công lao động, thương hiệu,
+lợi nhuận, thuế phí), rồi mới mở phần đối chiếu, gộp thành **c – v – m** và tự tính **m′** theo đúng
+cách chia của mình.
 
-Điểm cốt lõi: **không có phương án nào là đáp án đúng**. Sản phẩm không chấm điểm lựa chọn, chỉ
-ghi lại lựa chọn và phần lập luận.
+Điểm cốt lõi: **không có cách chia đúng**. Sản phẩm chỉ đặt cách chia của người học cạnh một khoảng
+tham chiếu minh hoạ, rồi hỏi ai chịu chi phí.
 
 ## Chạy thử
 
@@ -21,58 +21,60 @@ npm run build
 
 | Đường dẫn | Nội dung |
 | --- | --- |
-| `/` | Giới thiệu sản phẩm, ba chặng, hai mốc, hai kịch bản |
-| `/lich-su` | Hai mốc lịch sử kinh tế (1986, 2007): 3 con số, 1 mâu thuẫn, 2 phạm trù MLN122 mỗi mốc |
-| `/kich-ban` | Danh sách hai kịch bản kèm trạng thái tiến độ |
-| `/kich-ban/[id]` | Năm bước: bối cảnh → phương án → ba góc nhìn → góc phân tích → phản biện |
-| `/ho-so` | Hồ sơ học tập: phương án đã ghi, ba trục hệ quả, phản biện, huy hiệu, nguồn và giới hạn; in được A4 |
+| `/` | Giới thiệu, ba bước, ba món, phần "con số lấy từ đâu" |
+| `/boc/tra-sua` | Ly trà sữa 45.000đ |
+| `/boc/ao-thun` | Áo thun có thương hiệu 250.000đ |
+| `/boc/suat-an` | Suất ăn đặt qua ứng dụng 35.000đ |
+| `/kien-thuc` | Tám phạm trù: trích dẫn, nói lại, đúc kết, ứng dụng vào cả ba món; mục nguồn và giới hạn |
 
 Tất cả là trang tĩnh, không backend, không tài khoản.
 
-## Hai kịch bản
+## Một lần bóc gồm những gì
 
-1. **HS-01 · AI thay đổi dây chuyền** — nhà máy may 1.200 công nhân, công nghệ kiểm lỗi thay 60%
-   khâu kiểm bằng mắt. Chương 3 và 6.
-2. **HS-02 · Nền tảng tăng phí hoa hồng** — ứng dụng giao đồ ăn giữ 72% thị phần muốn tăng phí từ
-   20% lên 28%. Chương 4 và 5.
+1. **Chia giá bán** — bảy khoản, cộng đủ 100%, mỗi khoản có bốn nút −5 / −1 / +1 / +5 và hiện cả
+   phần trăm lẫn số tiền.
+2. **Mở phần thật** — bảng lệch so với khoảng tham chiếu, bốn nhóm `c`, `v`, `m`, khoản ngoài, và
+   `m′ = m / v × 100%` tính từ chính cách chia của người học (nếu `v = 0` thì báo rõ là không tính được).
+3. **Ai lấy phần thặng dư** — bốn người trong cùng một món, mỗi người nhận một phần và chịu một
+   loại rủi ro; kèm câu hỏi "nếu phải cắt 5% để giữ giá, bạn cắt ở đâu?" và hệ quả cho người chịu.
+4. **Một dòng của bạn** — trả lời ngắn ≥ 80 ký tự.
+5. **Kiến thức dùng ở đây** — bốn phạm trù liên quan, mỗi phạm trù có trích dẫn kèm nguồn, phần nói
+   lại bằng lời thường, đúc kết và ứng dụng vào chính món đó.
 
-Mỗi phương án có: hệ quả trên ba trục (kinh tế / an sinh / bền vững), dòng thời gian, người trả chi
-phí, ba góc nhìn khác nhau và hai phạm trù MLN122 kèm chương.
+**Điều kiện hoàn thành:** đủ 100% + đã mở phần thật + đã xem chuỗi giá trị + đã chọn chỗ cắt 5% +
+đã viết ≥ 80 ký tự. Tiến độ lưu ở `localStorage` với khoá `boc-gia:v1`.
 
-## Quy tắc tiến độ
+## Kiến thức
 
-Lưu trong `localStorage` với khoá `chon-duong:progress:v1`. Một kịch bản chỉ tính **hoàn thành**
-khi đã: đọc bối cảnh, chọn phương án, xem đủ **ba** góc nhìn của phương án đó, đọc góc phân tích và
-viết phản biện từ 80 ký tự. Đổi phương án sẽ đặt lại các góc nhìn đã xem, vì hệ quả khác nhau theo
-từng phương án.
+Tám phạm trù: hàng hoá và hai thuộc tính; giá trị hàng hoá; chi phí sản xuất `c + v`; tư bản bất
+biến và khả biến; giá trị thặng dư; tỷ suất giá trị thặng dư; cạnh tranh và độc quyền; quan hệ lợi
+ích kinh tế.
 
-Huy hiệu trao theo hành vi, không theo lựa chọn: *Người đọc lịch sử*, *Đã xem cả ba phía*,
-*Người phản biện*, *Tư duy hệ thống*.
+Nội dung **không đánh số chương** (theo yêu cầu): mỗi phạm trù đứng độc lập, xếp theo mạch lập luận.
+Mỗi mục có bốn phần: trích dẫn, nói lại bằng lời thường, đúc kết, ứng dụng vào ba món. Số trang của
+trích dẫn chưa đối chiếu bản in nên giao diện ghi rõ "số trang cần đối chiếu bản in".
 
 ## Hướng thiết kế
 
-Ngôn ngữ **hồ sơ giấy**: bàn lạnh `#e9ece6`, tờ giấy `#fdfdf8`, mực `#141b17`, đường kẻ `#c9d1cb`,
-dấu đỏ `#a5212a`, vàng nháp `#d8c25c`. Hai họ chữ: Barlow Condensed cho số/năm/tiêu đề, Be Vietnam
-Pro cho nội dung. Con dấu đỏ là khoảnh khắc chuyển động duy nhất — nó chỉ hiện khi một quyết định
-thực sự được ghi vào hồ sơ; có `prefers-reduced-motion` để tắt hiệu ứng.
+Ngôn ngữ **hoá đơn**: mặt bàn kraft `#e6e2d8`, tờ giấy `#fffdf7`, mực `#1a1a17`, mực xanh cho sức
+lao động `#1f4f8b`, mực đỏ cho phần thặng dư `#a8382c`. Đường kẻ nét đứt chia các khối như một tờ
+hoá đơn in nhiệt; chữ số dùng Barlow Condensed với `tabular-nums`, nội dung dùng Be Vietnam Pro.
 
-Bảng hệ quả dùng chữ, không dùng điểm số và không dùng biểu đồ, để không biến quyết định thành
-bài trắc nghiệm.
+Một chuyển động duy nhất: khối "Phần thật" trượt ra khi mở khoá (260 ms, tắt khi
+`prefers-reduced-motion`). Thanh tiền đổi màu theo nhóm **chỉ sau khi** mở kết quả — trước đó mọi
+đoạn cùng một màu để không lộ đáp án.
 
 ## Kiểm thử
 
-`npm test` chạy 34 test trong 5 tệp:
+`npm test` chạy 34 test trong 3 tệp:
 
-- `src/lib/progress.test.js` — quy tắc hoàn thành, đổi phương án, huy hiệu, đọc lại dữ liệu cũ/hỏng.
-- `src/content/content.test.js` — tính toàn vẹn nội dung: 2 kịch bản × 3 phương án × 3 góc nhìn,
-  mọi phạm trù trỏ về chương có thật, không phương án nào bị đánh dấu đúng.
-- `src/components/dossier/dossier.test.jsx` — hồ sơ trống/đã có dữ liệu, phần giới hạn.
-- `src/components/scenarios/ledger.test.jsx` — bảng hệ quả và danh sách kịch bản.
-- `src/components/scenarios/scenario-app.test.jsx` — luồng thật: chọn phương án, lưu localStorage,
-  mở đủ ba góc nhìn mới sang được bước phân tích.
-
-Kiểm tra bằng `curl` trên HTML server: `/` 200, `/lich-su` 200, `/kich-ban` 200, hai trang kịch bản
-200, `/ho-so` 200, đường dẫn sai trả 404.
+- `src/lib/split.test.js` — cộng dồn không vượt 100%, gộp `c/v/m`, `m′` (kể cả trường hợp `v = 0`),
+  khoảng tham chiếu, điều kiện hoàn thành, đọc lại dữ liệu cũ/hỏng, định dạng tiền.
+- `src/content/items.test.js` — ba món × bảy khoản, trung điểm tham chiếu cộng đúng 100%, chuỗi bốn
+  mắt, ba lựa chọn cắt 5%; tám phạm trù có trích dẫn và ứng dụng đủ ba món; **chặn số chương và
+  chặn chữ "đáp án đúng"** trong nội dung.
+- `src/components/receipt/receipt.test.jsx` — luồng thật: tăng phần trăm, chặn ở 100%, nút mở phần
+  thật bị khoá khi chưa đủ, mở ra thấy `m′`, lưu localStorage, phần kiến thức có trích dẫn.
 
 ## Cấu trúc
 
@@ -81,32 +83,27 @@ app/
   page.jsx                     trang chủ
   layout.jsx                   khung, chữ, metadata
   globals.css                  toàn bộ hệ thống thiết kế
-  lich-su/page.jsx             phần mở đầu
-  kich-ban/page.jsx            danh sách kịch bản
-  kich-ban/[id]/page.jsx       trang kịch bản (SSG theo id)
-  ho-so/page.jsx               hồ sơ + bản in
+  boc/[id]/page.jsx            trang một món (SSG theo id)
+  kien-thuc/page.jsx           phần kiến thức và nguồn
 src/
-  content/chapters.js          sáu chương MLN122
-  content/prologue.js          hai mốc lịch sử
-  content/scenarios.js         hai kịch bản, ba phương án mỗi kịch bản
-  lib/progress.js              mô hình tiến độ (hàm thuần)
-  lib/useProgress.js           đọc/ghi localStorage
-  components/…                 khung trang, con dấu, bảng hệ quả, kịch bản, hồ sơ
+  content/items.js             ba món: khoản, tham chiếu, chuỗi, lựa chọn cắt 5%
+  content/concepts.js          tám phạm trù: trích dẫn, đúc kết, ứng dụng
+  lib/split.js                 mô hình cách chia (hàm thuần)
+  lib/useSplit.js              đọc/ghi localStorage
+  components/receipt/…         tờ hoá đơn, thanh tiền, từng khoản, danh sách món
 docs/
-  de-cuong-san-pham.md         thuyết minh sản phẩm, phân việc, kịch bản demo
-  NGUON-VA-GIOI-HAN.md         nguồn từng con số và những gì chưa kiểm chứng
+  de-cuong-san-pham.md         thuyết minh, phân việc, kịch bản demo
+  NGUON-VA-GIOI-HAN.md         nguồn từng phần và những gì chưa kiểm chứng
 ```
 
-## Đã dùng lại gì từ bản trước
+## Dùng lại từ bản trước
 
-Bản trước của repo (Sạp 122 — sáu chương dưới dạng bảng giá, phòng học tương tác) đã được thay thế.
-Giữ lại: cấu hình Next.js và vitest, hai họ chữ OFL qua `@fontsource`, nút in `PrintButton`, cách
-đặt tài liệu trong `docs/`, và nguyên tắc tiến độ "không bấm là xong" (trước đây là lộ trình ba
-bước, nay là năm bước có điều kiện). Không giữ phần nội dung sáu chương, bảng tính giá trị thặng dư
-và trang `?chuong=` vì sản phẩm mới không cần.
+Giữ: cấu hình Next.js và vitest, hai họ chữ OFL qua `@fontsource`, cách đặt tài liệu trong `docs/`,
+và nguyên tắc "không bấm là xong" (ở đây là năm điều kiện hoàn thành). Bỏ toàn bộ nội dung sản phẩm
+cũ (kịch bản quyết định, hai mốc lịch sử, hồ sơ in ấn) vì sản phẩm này không dùng.
 
 ## Giới hạn
 
-Số liệu hai mốc còn là bản nháp; kịch bản là hư cấu; nội dung chưa được giảng viên thẩm định; chưa
-kiểm thử với người dùng thật và chưa kiểm tra trên máy thật ở 375 px. Chi tiết ở
-[`docs/NGUON-VA-GIOI-HAN.md`](docs/NGUON-VA-GIOI-HAN.md).
+Khoảng tham chiếu là ước lượng minh hoạ; trích dẫn giáo trình chưa đối chiếu số trang; nội dung chưa
+được giảng viên thẩm định; chưa kiểm thử với người dùng thật và chưa kiểm tra trên máy thật ở 375 px.
+Chi tiết ở [`docs/NGUON-VA-GIOI-HAN.md`](docs/NGUON-VA-GIOI-HAN.md).
