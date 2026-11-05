@@ -8,20 +8,20 @@ import SiteHeader from '../src/components/site/SiteHeader';
 import SiteFooter from '../src/components/site/SiteFooter';
 
 export const metadata = {
-  title: 'Chọn đường — một quyết định, nhiều góc nhìn | MLN122',
+  title: 'Bóc giá — một món hàng, ai lấy phần nào? | MLN122',
   description:
-    'Hai mốc lịch sử kinh tế Việt Nam và hai kịch bản quyết định: chọn phương án, xem hệ quả trên ba trục, nhìn từ ba phía và viết phản biện bằng lý luận MLN122.',
-  keywords: ['MLN122', 'kinh tế chính trị', 'Đại học FPT', 'học tập', 'kịch bản quyết định'],
+    'Chia giá bán của một ly trà sữa, một chiếc áo thun, một suất ăn thành bảy khoản; gộp lại thành c, v, m; tự tính m′ và xem ai nhận phần thặng dư.',
+  keywords: ['MLN122', 'kinh tế chính trị', 'giá trị thặng dư', 'Đại học FPT'],
   openGraph: {
-    title: 'Chọn đường — một quyết định, nhiều góc nhìn',
+    title: 'Bóc giá — một món hàng, ai lấy phần nào?',
     description:
-      'Từ bao cấp 1986 đến một quyết định hôm nay: học MLN122 bằng cách tự chọn và tự lập luận.',
+      'Từ 45.000 đồng của một ly trà sữa đến c, v, m: người học tự chia tiền rồi mới đối chiếu.',
     locale: 'vi_VN',
     type: 'website',
   },
 };
 
-export const viewport = { themeColor: '#e9ece6' };
+export const viewport = { themeColor: '#e6e2d8' };
 
 export default function RootLayout({ children }) {
   return (

@@ -1,142 +1,111 @@
 import Link from 'next/link';
-import { chapterLabel, chapterTitle } from '../src/content/chapters';
-import { MILESTONES } from '../src/content/prologue';
-import { SCENARIOS } from '../src/content/scenarios';
+import ItemGrid from '../src/components/receipt/ItemGrid';
+import { ITEMS } from '../src/content/items';
+import { formatVnd } from '../src/lib/split';
 
-const STAGES = [
+const STEPS = [
   {
     num: '01',
-    name: 'Đọc hai mốc lịch sử',
-    time: 'khoảng 3 phút',
-    body: 'Năm 1986 và năm 2007: hai lần nền kinh tế đổi cách vận hành, hai lần có người phải chọn trước.',
+    name: 'Chia giá bán',
+    body: 'Bảy khoản, cộng đủ 100%. Bạn phải quyết định bao nhiêu là vải, bao nhiêu là công, bao nhiêu là lợi nhuận.',
   },
   {
     num: '02',
-    name: 'Chọn một phương án',
-    time: 'khoảng 3 phút',
-    body: 'Mỗi kịch bản có ba phương án. Mở hệ quả của từng phương án trên ba trục trước khi ghi lựa chọn của bạn.',
+    name: 'Mở phần thật',
+    body: 'Đặt cách chia của bạn cạnh một khoảng tham chiếu, rồi gộp lại thành c, v, m và tự tính m′.',
   },
   {
     num: '03',
-    name: 'Xem ba phía, viết phản biện',
-    time: 'khoảng 5 phút',
-    body: 'Cùng một quyết định, ba người chịu ba hậu quả khác nhau. Rồi bạn giải thích lựa chọn bằng phạm trù MLN122.',
+    name: 'Xem ai lấy gì',
+    body: 'Bốn người trong cùng một món hàng. Rồi chọn chỗ cắt 5% và đọc xem ai thật sự phải chịu.',
   },
 ];
 
 export default function HomePage() {
   return (
     <div className="home">
-      <section className="cover">
-        <p className="cover-kicker">MLN122 · Kinh tế chính trị Mác – Lênin · Đại học FPT</p>
-        <h1 className="cover-title">
-          Một quyết định.
+      <section className="hero">
+        <p className="hero-kicker">MLN122 · Kinh tế chính trị Mác – Lênin · Đại học FPT</p>
+        <h1 className="hero-title">
+          Một món hàng.
           <br />
-          Nhiều góc nhìn.
+          Ai lấy phần nào?
         </h1>
-        <p className="cover-lead">
-          Bạn không đọc lại giáo trình. Bạn ngồi vào ghế người phải quyết định: một nhà máy có 1.200
-          công nhân, hoặc một ứng dụng giao đồ ăn giữ 72% thị phần. Ba phương án, ba hệ quả, ba
-          người chịu — và không có đáp án đúng.
+        <p className="hero-lead">
+          Ly trà sữa {formatVnd(45000)}, chiếc áo thun {formatVnd(250000)}, suất ăn {formatVnd(35000)}.
+          Bạn thấy giá bán, nhưng không thấy bên trong nó có bao nhiêu là nguyên liệu, bao nhiêu là
+          công, bao nhiêu là phần dôi ra. Trang này để bạn tự chia trước, rồi mới đối chiếu.
         </p>
-        <div className="cover-actions">
-          <Link className="btn btn-primary" href="/lich-su">
-            Bắt đầu từ hai mốc lịch sử
+        <div className="hero-actions">
+          <Link className="btn btn-primary" href={`/boc/${ITEMS[0].id}`}>
+            Bóc thử ly trà sữa
           </Link>
-          <Link className="btn btn-ghost" href="/kich-ban">
-            Vào thẳng kịch bản
+          <Link className="btn btn-ghost" href="/kien-thuc">
+            Đọc phần kiến thức
           </Link>
         </div>
-        <p className="cover-note">
-          Khoảng 20 phút cho cả hai kịch bản. Tiến độ lưu trên máy bạn, không cần tài khoản.
+        <p className="hero-note">
+          Khoảng 4 phút mỗi món. Không cần tài khoản, cách chia được lưu trên máy bạn.
         </p>
       </section>
 
-      <section className="stages" aria-label="Ba chặng của sản phẩm">
-        {STAGES.map((stage) => (
-          <article className="stage" key={stage.num}>
-            <p className="stage-num">{stage.num}</p>
-            <h2 className="stage-name">{stage.name}</h2>
-            <p className="stage-time">{stage.time}</p>
-            <p className="stage-body">{stage.body}</p>
+      <section className="steps" aria-label="Ba bước của một lần bóc">
+        {STEPS.map((step) => (
+          <article className="step" key={step.num}>
+            <p className="step-num">{step.num}</p>
+            <h2 className="step-name">{step.name}</h2>
+            <p className="step-body">{step.body}</p>
           </article>
         ))}
       </section>
 
-      <section className="home-milestones" aria-labelledby="home-moc">
-        <h2 id="home-moc" className="section-title">
-          Hai mốc mở đầu
+      <section className="section" aria-labelledby="ba-mon">
+        <h2 id="ba-mon" className="section-title">
+          Ba món để bóc
         </h2>
-        <div className="mile-strip">
-          {MILESTONES.map((milestone) => (
-            <Link className="mile-card" href={`/lich-su#${milestone.id}`} key={milestone.id}>
-              <span className="mile-card-year">{milestone.year}</span>
-              <span className="mile-card-title">{milestone.title}</span>
-              <span className="mile-card-note">{milestone.figures[0].value} — {milestone.figures[0].label}</span>
-            </Link>
-          ))}
-        </div>
+        <ItemGrid />
       </section>
 
-      <section className="home-scenarios" aria-labelledby="home-kich-ban">
-        <h2 id="home-kich-ban" className="section-title">
-          Hai kịch bản
-        </h2>
-        <div className="card-grid">
-          {SCENARIOS.map((scenario) => (
-            <article className="scene-card" key={scenario.id}>
-              <p className="scene-code">
-                {scenario.code} — {scenario.minutes} phút
-              </p>
-              <h3 className="scene-title">{scenario.title}</h3>
-              <p className="scene-kicker">{scenario.kicker}</p>
-              <p className="scene-role">{scenario.role.name}</p>
-              <ul className="scene-chips">
-                {scenario.chapters.map((n) => (
-                  <li key={n} title={chapterTitle(n)}>
-                    {chapterLabel(n)}
-                  </li>
-                ))}
-              </ul>
-              <Link className="btn btn-sm" href={`/kich-ban/${scenario.id}`}>
-                Mở kịch bản này
-              </Link>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="why" aria-labelledby="home-vi-sao">
-        <h2 id="home-vi-sao" className="section-title">
-          Vì sao làm trang này
+      <section className="section why" aria-labelledby="vi-sao">
+        <h2 id="vi-sao" className="section-title">
+          Vì sao làm theo cách này
         </h2>
         <div className="why-grid">
           <div>
-            <h3 className="why-title">Học xong khái niệm nhưng không dùng được</h3>
+            <h3 className="why-title">Giá là chỗ kiến thức bị bỏ qua nhiều nhất</h3>
             <p>
-              Giá trị thặng dư, quan hệ sản xuất, độc quyền đều dễ đọc. Khó là nhìn một tình huống
-              thật và biết khái niệm nào đang giải thích nó. Sản phẩm này bắt đầu từ tình huống,
-              không bắt đầu từ định nghĩa.
+              Ai cũng biết một ly trà sữa giá bao nhiêu, gần như không ai biết bên trong nó có bao
+              nhiêu là công lao động. Bắt đầu từ con số quen thuộc thì phạm trù mới có chỗ bám.
             </p>
           </div>
           <div>
-            <h3 className="why-title">Không có đáp án đúng, nên phải lập luận</h3>
+            <h3 className="why-title">Phải tự chia, không được chọn đáp án</h3>
             <p>
-              Cả ba phương án đều có người được lợi và người trả giá. Vì không thể chọn theo đáp án
-              mẫu, người học phải nói rõ mình dựa vào phạm trù nào — đó là phần được ghi vào hồ sơ.
+              Không có phương án A, B, C. Bạn đặt từng phần trăm, nên kết quả là cách nghĩ của bạn —
+              và chỗ lệch với tham chiếu là chỗ cần giải thích, không phải điểm trừ.
             </p>
           </div>
           <div>
-            <h3 className="why-title">Nối lịch sử kinh tế với quyết định hôm nay</h3>
+            <h3 className="why-title">Tự tính ra m′ của chính mình</h3>
             <p>
-              1986 và 2007 không phải chuyện để nhớ ngày tháng. Chúng là hai lần cùng một câu hỏi:
-              ai chịu chi phí của thay đổi, và chịu trong bao lâu.
+              m′ không phải công thức để học thuộc. Bạn vừa có m và v do mình chia, nên con số xuất
+              hiện như hệ quả của một quyết định phân phối.
             </p>
           </div>
         </div>
-        <p className="why-note">
-          Số liệu lịch sử đang ở dạng nháp và được ghi rõ trong hồ sơ.{' '}
-          <Link href="/ho-so#gioi-han">Xem nguồn và giới hạn</Link>.
+      </section>
+
+      <section className="section honest" aria-labelledby="trung-thuc">
+        <h2 id="trung-thuc" className="section-title">
+          Con số lấy từ đâu
+        </h2>
+        <p>
+          Cả ba món dùng <strong>khoảng tham chiếu minh hoạ</strong> dựng để dạy cách chia, không
+          phải số liệu công bố của quán hay doanh nghiệp nào. Mỗi món ghi chú ngay dưới phần kết quả.
+          Phần trích dẫn giáo trình có ghi nguồn, số trang còn chờ đối chiếu bản in.
+        </p>
+        <p>
+          <Link href="/kien-thuc#nguon">Xem đầy đủ nguồn và giới hạn</Link>.
         </p>
       </section>
     </div>
