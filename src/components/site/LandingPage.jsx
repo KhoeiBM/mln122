@@ -1,7 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { ArrowRight, ArrowUpRight } from 'lucide-react';
+import { useState } from 'react';
 import { course, receipt, faqs } from '../../content/course';
 
 const vnd = (n) => new Intl.NumberFormat('vi-VN').format(Math.round(n));
@@ -10,156 +9,115 @@ function Masthead() {
   return (
     <header className="masthead">
       <div className="shell masthead-inner">
-        <a className="brand" href="/" aria-label="Sạp 122 — trang chủ">
-          <span className="brand-mark">122</span>
-          <span className="brand-word">
-            Sạp 122
-            <small>Kinh tế chính trị · ĐH FPT</small>
-          </span>
+        <a className="wordmark" href="/" aria-label="Sạp 122, về trang chủ">
+          Sạp <span>122</span>
+          <small>Kinh tế chính trị, Đại học FPT</small>
         </a>
         <nav className="masthead-nav" aria-label="Điều hướng chính">
           <a href="#chuong">Sáu chương</a>
           <a href="#cach-hoc">Cách học</a>
-          <a href="#thu-tay">Thử tay</a>
-          <a href="#hoi-dap">Hỏi đáp</a>
+          <a href="#bang-tinh">Bảng tính</a>
+          <a href="#hoi-dap">Hỏi nhanh</a>
         </nav>
-        <div className="masthead-actions">
-          <a className="button button-primary button-sm" href="/studio">
-            Vào sạp học <ArrowRight size={15} strokeWidth={2.2} />
-          </a>
-        </div>
+        <a className="btn btn-primary btn-sm" href="/studio">
+          Vào phòng học
+        </a>
       </div>
     </header>
   );
 }
 
-function ReceiptCard() {
+function PriceBoard() {
   return (
-    <div className="hero-visual">
-      <figure className="receipt" aria-label="Hoá đơn minh hoạ một ly trà sữa, chia thành c, v và m">
-        <div className="receipt-head">
-          <span>SẠP 122</span>
-          <span>No. 0003</span>
-        </div>
-        <p className="receipt-sub">Hoá đơn minh hoạ · chương 03</p>
-
-        <div className="receipt-item">
-          <span>{receipt.item}</span>
-          <b>{vnd(receipt.price)}</b>
-        </div>
-        <div className="receipt-rule" />
-
-        <ul className="receipt-lines">
-          {receipt.lines.map((line) => (
-            <li key={line.key}>
-              <span className={'key' + (line.key === 'm' ? ' is-m' : '')}>{line.key}</span>
-              <span className="label">
-                {line.label}
-                <small>{line.note}</small>
-              </span>
-              <b>{vnd(line.value)}</b>
-            </li>
-          ))}
-        </ul>
-
-        <div className="receipt-rule" />
-        <div className="receipt-total">
-          <span>Tỷ suất m′ = m / v</span>
-          <b>200%</b>
-        </div>
-        <p className="receipt-note">
-          Con số là ví dụ để học phạm trù, không phải giá thật của bất kỳ quán nào. m′ càng cao, phần
-          lao động không được trả công càng lớn.
-        </p>
-      </figure>
-      <span className="stamp" aria-hidden="true">
-        6 chương
-        <br />3 tín chỉ
-        <br />MLN122
-      </span>
-    </div>
+    <figure className="board" aria-label="Bảng giá minh hoạ một ly trà sữa, chia thành c, v và m">
+      <div className="board-head">
+        <span>Bảng giá một ly trà sữa</span>
+        <span>Ví dụ minh hoạ</span>
+      </div>
+      <ol className="board-rows">
+        <li className="board-row is-total">
+          <span className="board-name">
+            Trà sữa trân châu, size L
+            <small>Giá bán</small>
+          </span>
+          <span className="board-num">{vnd(receipt.price)}</span>
+        </li>
+        {receipt.lines.map((line) => (
+          <li className={'board-row' + (line.key === 'm' ? ' is-m' : '')} key={line.key}>
+            <span className="board-key">{line.key}</span>
+            <span className="board-name">
+              {line.label}
+              <small>{line.note}</small>
+            </span>
+            <span className="board-num">{vnd(line.value)}</span>
+          </li>
+        ))}
+      </ol>
+      <div className="board-note">
+        m′ = m / v = 200%. Con số là ví dụ để học phạm trù, không phải giá thật của quán nào.
+      </div>
+    </figure>
   );
 }
 
 function Hero() {
   return (
     <section className="hero">
-      <div className="hero-copy">
-        <p className="eyebrow">
-          <span className="dot" />
-          MLN122 · Kinh tế chính trị Mác – Lênin
-        </p>
-        <h1>
-          Giá trị thặng dư bắt đầu từ <em>một ly trà sữa.</em>
-        </h1>
+      <div>
+        <h1>Một ly trà sữa cũng có giá trị thặng dư.</h1>
         <p className="lede">
-          Sạp 122 biến sáu chương của môn MLN122 thành những thứ bạn gặp mỗi ngày: tờ hoá đơn, chuyến
-          xe của shipper, một phiên livestream, bảng giá vàng. Học bằng cách kéo, bấm, đoán sai rồi
-          hiểu lại — không phải đọc chay.
+          Sạp 122 viết lại sáu chương Kinh tế chính trị Mác – Lênin quanh những thứ bạn gặp mỗi ngày:
+          hoá đơn quán nước, chuyến xe shipper, phiên livestream, bảng giá vàng. Có bảng tính kéo
+          được, có câu hỏi kèm giải thích, tiến độ lưu trên máy bạn.
         </p>
         <div className="hero-actions">
-          <a className="button button-primary" href="/studio">
-            Vào sạp học <ArrowRight size={16} strokeWidth={2.2} />
+          <a className="btn btn-primary" href="/studio">
+            Vào phòng học
           </a>
-          <a className="button button-ghost" href="#chuong">
+          <a className="btn btn-quiet" href="#chuong">
             Xem sáu chương
           </a>
         </div>
-        <dl className="hero-meta">
+        <div className="hero-facts">
           <div>
-            <dt>Sáu chương</dt>
-            <dd>từ đối tượng nghiên cứu đến hội nhập</dd>
+            <b>6</b> chương theo giáo trình
           </div>
           <div>
-            <dt>3 tín chỉ</dt>
-            <dd>theo chương trình đại học FPT</dd>
+            <b>3</b> tín chỉ
           </div>
           <div>
-            <dt>Lưu trên máy</dt>
-            <dd>tiến độ không cần tài khoản</dd>
+            <b>14</b> câu hỏi có giải thích
           </div>
-        </dl>
+          <div>Không cần tài khoản</div>
+        </div>
       </div>
-      <ReceiptCard />
+      <PriceBoard />
     </section>
   );
 }
 
-function ChapterList() {
+function ChapterShelf() {
   return (
     <section className="section" id="chuong">
       <div className="section-head">
-        <div>
-          <p className="eyebrow">
-            <span className="dot" />
-            Bản đồ môn học
-          </p>
-          <h2>
-            Sáu chương, sáu câu hỏi
-            <br />
-            bạn đã từng <em>tự hỏi.</em>
-          </h2>
-        </div>
-        <p className="section-note">
+        <h2>Sáu chương, sáu câu hỏi bạn đã từng tự hỏi.</h2>
+        <p>
           Mỗi chương mở bằng một câu hỏi đời thường rồi mới đi vào phạm trù. Đọc từ trên xuống, hoặc
           nhảy thẳng vào chương đang học trên lớp.
         </p>
       </div>
 
-      <ol className="chapter-list">
+      <ol className="shelf">
         {course.chapters.map((chapter) => (
           <li key={chapter.id}>
-            <a className="chapter-row" href={`/studio?chuong=${chapter.id}`}>
-              <span className="chapter-no">{chapter.number}</span>
-              <span className="chapter-main">
-                <strong>{chapter.title}</strong>
-                <span className="chapter-hook">{chapter.hook}</span>
+            <a className="shelf-row" href={`/studio?chuong=${chapter.id}`}>
+              <span className="shelf-no">{chapter.number}</span>
+              <span>
+                <span className="shelf-title">{chapter.title}</span>
+                <span className="shelf-hook">{chapter.hook}</span>
               </span>
-              <span className="chapter-meta">
-                <span className="chip">{chapter.level}</span>
-                <span>{chapter.time} phút</span>
-              </span>
-              <ArrowUpRight className="chapter-arrow" size={18} strokeWidth={1.8} />
+              <span className="shelf-level">{chapter.level}</span>
+              <span className="shelf-time">{chapter.time} phút</span>
             </a>
           </li>
         ))}
@@ -170,67 +128,50 @@ function ChapterList() {
 
 function FieldNotes() {
   return (
-    <section className="section">
-      <div className="field-notes">
-        <figure className="field-photo">
+    <section className="section" id="cach-hoc">
+      <div className="notes">
+        <figure>
           <img
             src="/sap-hang.jpg"
             alt="Một sạp tạp hoá nhỏ với hàng hoá đóng gói treo kín vách và những tấm bảng giá viết tay"
             width="700"
-            height="420"
+            height="525"
             loading="lazy"
             decoding="async"
           />
           <figcaption>
-            Một sạp hàng nhỏ là nơi chương 2 xuất hiện cùng lúc: hàng hoá, hai thuộc tính của hàng
-            hoá, tiền, cung – cầu và cả sự mặc cả.
+            Sạp hàng nhỏ là nơi chương 2 xuất hiện cùng lúc: hàng hoá, hai thuộc tính của hàng hoá,
+            tiền, cung cầu và cả sự mặc cả.
           </figcaption>
         </figure>
 
         <div>
-          <p className="eyebrow">
-            <span className="dot" />
-            Cách học
-          </p>
-          <h2>
-            Không học thuộc.
-            <br />
-            Tập <em>nhìn.</em>
-          </h2>
+          <h2>Điểm khó không nằm ở số tiết.</h2>
           <p className="lede">
-            Điểm khó của MLN122 không nằm ở số tiết, mà ở chỗ các phạm trù rất trừu tượng. Cách duy
-            nhất để nhớ lâu là gắn mỗi phạm trù với một vật cụ thể và tự kiểm tra lại.
+            Các phạm trù của môn này rất trừu tượng, và đề cương thì không giúp bạn hình dung. Cách
+            duy nhất để nhớ lâu là gắn mỗi phạm trù với một vật cụ thể rồi tự kiểm tra lại.
           </p>
-          <ul className="principle-list">
+          <ul className="note-list">
             <li>
-              <span>01</span>
-              <div>
-                <b>Một phạm trù, một vật thật</b>
-                <p>
-                  Giá trị thặng dư đi với tờ hoá đơn; cạnh tranh đi với hai quán cà phê cạnh nhau;
-                  hội nhập đi với một chiếc điện thoại.
-                </p>
-              </div>
+              <b>Một phạm trù, một vật thật</b>
+              <p>
+                Giá trị thặng dư đi với tờ hoá đơn. Cạnh tranh đi với hai quán cà phê sát vách. Hội
+                nhập đi với một chiếc điện thoại.
+              </p>
             </li>
             <li>
-              <span>02</span>
-              <div>
-                <b>Đoán trước, đọc sau</b>
-                <p>
-                  Mỗi câu hỏi đều có phản hồi giải thích ngay. Sai một lần và hiểu vì sao sai tốt hơn
-                  đọc lại ba lần.
-                </p>
-              </div>
+              <b>Đoán trước, đọc sau</b>
+              <p>
+                Mỗi câu hỏi có phản hồi giải thích ngay khi bạn chọn. Đoán sai một lần rồi hiểu vì sao
+                sai tốt hơn đọc lại ba lần.
+              </p>
             </li>
             <li>
-              <span>03</span>
-              <div>
-                <b>Học theo chương đang lên lớp</b>
-                <p>
-                  Trang bảng điều khiển giữ trạng thái từng chương, để bạn mở máy ra là biết mình
-                  đang ở đâu.
-                </p>
-              </div>
+              <b>Học theo chương đang lên lớp</b>
+              <p>
+                Phòng học giữ trạng thái từng chương, để mở máy ra là biết mình đang ở đâu và còn
+                chương nào chưa đụng tới.
+              </p>
             </li>
           </ul>
         </div>
@@ -239,187 +180,153 @@ function FieldNotes() {
   );
 }
 
-function LabCalculator() {
+function Counter() {
   const [price, setPrice] = useState(45000);
   const c = 18000;
   const v = 9000;
   const m = price - c - v;
   const rate = (m / v) * 100;
-
-  const { parts } = useMemo(() => {
-    const total = Math.max(price, 1);
-    return {
-      parts: [c, v, Math.max(m, 0)].map((value) => (value / total) * 100),
-    };
-  }, [price, m]);
+  const total = Math.max(price, 1);
 
   return (
-    <section className="section" id="thu-tay">
-      <div className="lab">
-        <div className="lab-copy">
-          <p className="eyebrow">
-            <span className="dot" />
-            Thử tay
-          </p>
-          <h2>
-            Kéo giá bán,
-            <br />
-            xem <em>m′</em> xuất hiện.
-          </h2>
-          <p>
+    <section className="section" id="bang-tinh">
+      <div className="counter">
+        <div>
+          <h2>Kéo giá bán, thấy m′ xuất hiện.</h2>
+          <p className="lede" style={{ marginTop: 18 }}>
             Giả định một quán nhỏ: mỗi ly tốn 18.000đ nguyên liệu và khấu hao máy, 9.000đ tiền công.
-            Kéo giá bán để thấy giá trị thặng dư và tỷ suất thặng dư thay đổi ra sao — chỉ với một
-            thanh trượt.
+            Kéo giá bán để thấy giá trị thặng dư và tỷ suất thặng dư thay đổi. Bản đầy đủ có thêm
+            thanh trượt cho nguyên liệu, khấu hao và tiền công.
           </p>
-          <a className="text-link" href="/studio">
-            Mở bản đầy đủ trong phòng học <ArrowRight size={15} />
-          </a>
+          <p style={{ marginTop: 16 }}>
+            <a className="btn btn-quiet btn-sm" href="/studio">
+              Mở bảng tính đầy đủ
+            </a>
+          </p>
         </div>
 
-        <div className="lab-panel">
-          <div className="lab-panel-head">
-            <h3>Một ly trà sữa</h3>
-            <span>MINH HOẠ</span>
+        <div className="counter-panel">
+          <div className="counter-head">
+            <span>Quầy tính một ly</span>
+            <span>Minh hoạ</span>
           </div>
-
-          <div className="lab-field">
-            <label className="lab-field-label" htmlFor="gia-ban">
-              <span>Giá bán</span>
-              <output htmlFor="gia-ban">{vnd(price)}đ</output>
-            </label>
-            <input
-              id="gia-ban"
-              className="lab-range"
-              type="range"
-              min="20000"
-              max="80000"
-              step="1000"
-              value={price}
-              onChange={(event) => setPrice(Number(event.target.value))}
-            />
-          </div>
-
-          <div className="lab-split" aria-hidden="true">
-            <span className="seg-c" style={{ width: `${parts[0]}%` }} />
-            <span className="seg-v" style={{ width: `${parts[1]}%` }} />
-            <span className="seg-m" style={{ width: `${parts[2]}%` }} />
-          </div>
-          <div className="lab-legend">
-            <span>
-              <i style={{ background: '#c8bfa9' }} /> c · nguyên liệu, khấu hao
-            </span>
-            <span>
-              <i style={{ background: 'var(--green-2)' }} /> v · tiền công
-            </span>
-            <span>
-              <i style={{ background: 'var(--brass)' }} /> m · giá trị thặng dư
-            </span>
-          </div>
-
-          <dl className="lab-output">
-            <div>
-              <dt>Giá trị thặng dư m</dt>
-              <dd>
-                {vnd(m)}
-                <small>đ</small>
-              </dd>
+          <div className="counter-body">
+            <div className="field">
+              <label className="field-label" htmlFor="gia-ban">
+                <span>Giá bán</span>
+                <output htmlFor="gia-ban">{vnd(price)}đ</output>
+              </label>
+              <input
+                id="gia-ban"
+                className="range"
+                type="range"
+                min="20000"
+                max="80000"
+                step="1000"
+                value={price}
+                onChange={(event) => setPrice(Number(event.target.value))}
+              />
             </div>
-            <div>
-              <dt>Tỷ suất m′ = m / v</dt>
-              <dd>
-                {rate.toFixed(0)}
-                <small>%</small>
-              </dd>
-            </div>
-          </dl>
 
-          <p className={'lab-note' + (m < 0 ? ' is-negative' : '')}>
-            {m < 0
-              ? 'Giá bán thấp hơn chi phí: không có giá trị thặng dư, quán đang lỗ. Đây là lúc phạm trù trở nên rất cụ thể.'
-              : 'c không đổi, v không đổi — phần dôi ra chỉ đến từ lao động sống trong giờ làm việc.'}
-          </p>
+            <div className="split" aria-hidden="true">
+              <span className="split-c" style={{ width: `${(c / total) * 100}%` }} />
+              <span className="split-v" style={{ width: `${(v / total) * 100}%` }} />
+              <span className="split-m" style={{ width: `${(Math.max(m, 0) / total) * 100}%` }} />
+            </div>
+            <div className="legend">
+              <span>
+                <i style={{ background: 'var(--rule)' }} /> c, nguyên liệu và khấu hao
+              </span>
+              <span>
+                <i style={{ background: 'var(--board)' }} /> v, tiền công
+              </span>
+              <span>
+                <i style={{ background: 'var(--yellow)' }} /> m, giá trị thặng dư
+              </span>
+            </div>
+
+            <div className="readout">
+              <div className={m < 0 ? '' : 'is-m'}>
+                <span className="readout-label">Giá trị thặng dư m</span>
+                <span className="readout-value">
+                  {vnd(m)}
+                  <small>đ</small>
+                </span>
+              </div>
+              <div>
+                <span className="readout-label">Tỷ suất m′ bằng m chia v</span>
+                <span className="readout-value">
+                  {rate.toFixed(0)}
+                  <small>%</small>
+                </span>
+              </div>
+            </div>
+
+            <p className={'counter-note' + (m < 0 ? ' is-loss' : '')}>
+              {m < 0
+                ? 'Giá bán thấp hơn chi phí nên không có phần dôi ra. Quán đang lỗ, và đây là lúc phạm trù trở nên rất cụ thể.'
+                : 'c và v không đổi. Phần dôi ra chỉ đến từ lao động sống trong giờ làm việc.'}
+            </p>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-const features = [
-  {
-    no: '01',
-    title: 'Bảng điều khiển cho sinh viên',
-    copy: 'Sáu chương hiện như sáu mục công việc: đã đọc hay chưa, điểm luyện cao nhất, chương nào đang mở. Dựng trên Cloudscape Design System của AWS nên đọc bảng và trạng thái rất nhanh.',
-    tag: 'Cloudscape · bảng, bộ lọc, trạng thái',
-  },
-  {
-    no: '02',
-    title: 'Máy tính giá trị thặng dư',
-    copy: 'Kéo bốn thanh trượt: doanh thu, nguyên liệu, khấu hao, tiền công. Máy tự tính c, v, m và m′ — và cảnh báo khi bạn kéo tới vùng không có thặng dư.',
-    tag: 'Tương tác · số liệu cập nhật tức thì',
-  },
-  {
-    no: '03',
-    title: 'Sổ tay và bài luyện',
-    copy: 'Mười bốn câu trắc nghiệm có giải thích, mười hai flashcard và phần đánh dấu từ khoá. Tiến độ lưu ngay trên máy bạn, không cần đăng nhập.',
-    tag: 'localStorage · không tài khoản',
-  },
-];
-
-function Features() {
+function Rooms() {
   return (
-    <section className="section" id="cach-hoc">
+    <section className="section" id="phong-hoc">
       <div className="section-head">
-        <div>
-          <p className="eyebrow">
-            <span className="dot" />
-            Trong phòng học có gì
-          </p>
-          <h2>
-            Ba thứ bạn không tìm thấy
-            <br />
-            trong <em>đề cương.</em>
-          </h2>
-        </div>
-        <p className="section-note">
-          Sạp 122 không phải bản số hoá của giáo trình. Nó là lớp ghi chú có thể bấm được, để bạn
-          dùng trước giờ lên lớp và trước ngày thi.
+        <h2>Phòng học không phải bản số hoá của giáo trình.</h2>
+        <p>
+          Nó là lớp ghi chú bấm được, để dùng trước giờ lên lớp và trước ngày thi. Ba phần dưới đây
+          làm những việc mà đề cương giấy không làm được.
         </p>
       </div>
 
-      <div className="feature-grid">
-        {features.map((feature) => (
-          <article className="feature" key={feature.no}>
-            <span className="feature-no">{feature.no}</span>
-            <h3>{feature.title}</h3>
-            <p>{feature.copy}</p>
-            <span className="feature-tag">{feature.tag}</span>
-          </article>
-        ))}
+      <div className="rooms">
+        <article className="room">
+          <h3>Biết mình đang ở đâu</h3>
+          <p>
+            Sáu chương hiện như sáu mục công việc: đã đọc hay chưa, chương nào đang mở, điểm luyện
+            cao nhất. Bảng điều khiển này xếp theo thứ tự giáo trình nên không phải nhớ lại.
+          </p>
+          <span className="tag">Lưu trong trình duyệt, không cần đăng nhập</span>
+        </article>
+        <article className="room">
+          <h3>Tính c, v, m bằng tay</h3>
+          <p>
+            Bốn thanh trượt cho giá bán, nguyên liệu, khấu hao, tiền công. Máy tính trả về c, v, m,
+            m′ và cảnh báo khi bạn kéo tới vùng không có thặng dư.
+          </p>
+          <span className="tag">Cập nhật ngay khi kéo</span>
+        </article>
+        <article className="room">
+          <h3>Tự kiểm tra trước khi thi</h3>
+          <p>
+            Mười bốn câu trắc nghiệm có giải thích, mười hai thẻ ghi nhớ, và phần đánh dấu từng chương
+            khi bạn đã đọc xong. Sai ở đâu thì biết ngay ở đó.
+          </p>
+          <span className="tag">Có giải thích cho mọi đáp án</span>
+        </article>
       </div>
     </section>
   );
 }
 
-function Faq() {
+function Questions() {
   return (
     <section className="section" id="hoi-dap">
-      <div className="faq">
+      <div className="qa">
         <div>
-          <p className="eyebrow">
-            <span className="dot" />
-            Hỏi nhanh
-          </p>
-          <h2>
-            Điều bạn nên
-            <br />
-            biết trước khi <em>học.</em>
-          </h2>
-          <p className="section-note" style={{ marginTop: 18 }}>
-            Nếu còn câu hỏi khác, phần ghi chú ở chân trang nói rõ nguồn nội dung và giới hạn của
-            trang.
+          <h2>Hỏi nhanh trước khi học.</h2>
+          <p className="lede" style={{ marginTop: 16 }}>
+            Phần chân trang nói rõ nguồn nội dung và giới hạn của trang. Nếu bạn còn thắc mắc khác,
+            hỏi giảng viên trước khi dùng trang này để ôn thi.
           </p>
         </div>
-        <div className="faq-list">
+        <div className="qa-list">
           {faqs.map((item) => (
             <details key={item.q}>
               <summary>{item.q}</summary>
@@ -436,18 +343,16 @@ function Closing() {
   return (
     <section className="closing">
       <div>
-        <p className="eyebrow light">Mở cửa 24/7</p>
-        <h2>
-          Chọn một chương,
-          <br />
-          bắt đầu từ <em>câu hỏi.</em>
-        </h2>
+        <h2>Chọn một chương và bắt đầu từ câu hỏi.</h2>
+        <p>
+          Không cần đăng ký. Tiến độ nằm trên máy bạn và chỉ mất khi bạn xoá dữ liệu trình duyệt.
+        </p>
       </div>
-      <div className="closing-actions">
-        <a className="button button-light" href="/studio">
-          Vào phòng học <ArrowRight size={16} strokeWidth={2.2} />
+      <div>
+        <a className="btn" href="/studio">
+          Vào phòng học
         </a>
-        <span>Không cần đăng ký · tiến độ lưu trên máy bạn</span>
+        <p className="closing-meta">Sáu chương, khoảng hai tiếng rưỡi nếu đọc liền.</p>
       </div>
     </section>
   );
@@ -458,23 +363,22 @@ function Footer() {
     <footer className="site-footer">
       <div className="shell footer-grid">
         <div>
-          <span className="footer-brand">
-            <span>122</span> Sạp 122 · Kinh tế chính trị
+          <span className="footer-mark">
+            Sạp <span>122</span>
           </span>
           <p className="footer-note">
             Nội dung tóm tắt và diễn giải lại từ giáo trình Kinh tế chính trị Mác – Lênin, dùng cho
             việc tự học. Trang không thay thế tài liệu chính thức, bài giảng hay hướng dẫn ôn thi của
-            giảng viên. Ảnh minh hoạ trong bài là ảnh tư liệu, cần kiểm tra lại giấy phép nếu dùng
-            cho mục đích công khai.
+            giảng viên. Ảnh trong bài là ảnh tư liệu, cần kiểm tra lại giấy phép nếu dùng công khai.
           </p>
         </div>
         <nav className="footer-links" aria-label="Liên kết chân trang">
           <a href="/studio">Phòng học</a>
-          <a href="/studio?chuong=chuong-3">Chương 3 · Giá trị thặng dư</a>
+          <a href="/studio?chuong=chuong-3">Chương 3, giá trị thặng dư</a>
           <a href="#hoi-dap">Câu hỏi thường gặp</a>
         </nav>
         <div className="footer-meta">
-          MLN122 · 3 tín chỉ
+          MLN122, 3 tín chỉ
           <br />
           Cập nhật {course.updated}
           <br />
@@ -487,18 +391,18 @@ function Footer() {
 
 export default function LandingPage() {
   return (
-    <div className="site">
+    <>
       <Masthead />
       <main className="shell">
         <Hero />
-        <ChapterList />
+        <ChapterShelf />
         <FieldNotes />
-        <LabCalculator />
-        <Features />
-        <Faq />
+        <Counter />
+        <Rooms />
+        <Questions />
         <Closing />
       </main>
       <Footer />
-    </div>
+    </>
   );
 }

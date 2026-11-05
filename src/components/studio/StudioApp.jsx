@@ -1,48 +1,27 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import AppLayout from '@cloudscape-design/components/app-layout';
-import TopNavigation from '@cloudscape-design/components/top-navigation';
-import SideNavigation from '@cloudscape-design/components/side-navigation';
-import BreadcrumbGroup from '@cloudscape-design/components/breadcrumb-group';
-import Header from '@cloudscape-design/components/header';
-import Container from '@cloudscape-design/components/container';
-import SpaceBetween from '@cloudscape-design/components/space-between';
-import Grid from '@cloudscape-design/components/grid';
-import Table from '@cloudscape-design/components/table';
-import Tabs from '@cloudscape-design/components/tabs';
-import Cards from '@cloudscape-design/components/cards';
-import Badge from '@cloudscape-design/components/badge';
-import Button from '@cloudscape-design/components/button';
-import Box from '@cloudscape-design/components/box';
-import ProgressBar from '@cloudscape-design/components/progress-bar';
-import StatusIndicator from '@cloudscape-design/components/status-indicator';
-import RadioGroup from '@cloudscape-design/components/radio-group';
-import Flashbar from '@cloudscape-design/components/flashbar';
-import Slider from '@cloudscape-design/components/slider';
-import Form from '@cloudscape-design/components/form';
-import FormField from '@cloudscape-design/components/form-field';
-import Select from '@cloudscape-design/components/select';
-import Alert from '@cloudscape-design/components/alert';
-import Link from '@cloudscape-design/components/link';
-import KeyValuePairs from '@cloudscape-design/components/key-value-pairs';
 import { course } from '../../content/course';
-import { applyStudioTheme } from './theme';
-import { computeSurplus, chapterStatus, STORAGE_KEY, EMPTY_PROGRESS } from '../../lib/metrics';
-
-const vnd = (n) => new Intl.NumberFormat('vi-VN').format(Math.round(n));
+import {
+  computeSurplus,
+  chapterStatus,
+  readCount,
+  STORAGE_KEY,
+  EMPTY_PROGRESS,
+} from '../../lib/metrics';
 
 const chapters = course.chapters;
+
 const questions = chapters.flatMap((chapter) =>
   chapter.quiz.map((question, index) => ({
     ...question,
     key: `${chapter.id}-${index}`,
-    chapterId: chapter.id,
     chapterNo: chapter.number,
     chapterTitle: chapter.title,
   })),
 );
-const flashcards = chapters.flatMap((chapter) =>
+
+const cards = chapters.flatMap((chapter) =>
   chapter.flashcards.map((card, index) => ({
     ...card,
     key: `${chapter.id}-${index}`,
@@ -51,256 +30,272 @@ const flashcards = chapters.flatMap((chapter) =>
   })),
 );
 
-const yes = (v) => v === true;
+const vnd = (n) => new Intl.NumberFormat('vi-VN').format(Math.round(n));
 
-/* ------------------------------------------------------------------ */
-/* Bảng điều khiển                                                     */
-/* ------------------------------------------------------------------ */
+const NAV = [
+  { id: 'tong-quan', label: 'Bảng điều khiển' },
+  { id: 'luyen-tap', label: 'Trắc nghiệm' },
+  { id: 'so-tay', label: 'Sổ tay ghi nhớ' },
+  { id: 'bang-tinh', label: 'Bảng tính c, v, m' },
+];
 
-function Overview({ progress, onOpen, onPractice }) {
-  const readCount = chapters.filter((chapter) => yes(progress.read?.[chapter.id])).length;
-  const percent = Math.round((readCount / chapters.length) * 100);
-  const nextChapter = chapters.find((chapter) => !yes(progress.read?.[chapter.id])) ?? chapters[0];
-
-  const columns = [
-    {
-      id: 'chapter',
-      header: 'Chương',
-      cell: (item) => (
-        <Link href="#mo-chuong" onFollow={(event) => { event.preventDefault(); onOpen(item.id); }}>
-          {item.number} · {item.title}
-        </Link>
-      ),
-      width: 280,
-    },
-    { id: 'full', header: 'Nội dung', cell: (item) => <Box color="text-body-secondary">{item.fullTitle}</Box> },
-    {
-      id: 'status',
-      header: 'Trạng thái',
-      cell: (item) => {
-        const status = chapterStatus(progress, item);
-        return <StatusIndicator type={status.type}>{status.label}</StatusIndicator>;
-      },
-      width: 160,
-    },
-    {
-      id: 'level',
-      header: 'Mức độ',
-      cell: (item) => <Badge color={item.level === 'Trọng tâm' ? 'red' : 'grey'}>{item.level}</Badge>,
-      width: 120,
-    },
-    { id: 'time', header: 'Thời lượng', cell: (item) => `${item.time} phút`, width: 110 },
-    {
-      id: 'action',
-      header: '',
-      cell: (item) => (
-        <Button variant="inline-link" onClick={() => onOpen(item.id)}>
-          Mở chương
-        </Button>
-      ),
-      width: 130,
-    },
-  ];
-
+function Rail({ section, onGo, progress }) {
   return (
-    <SpaceBetween size="l">
-      <Grid gridDefinition={[{ colspan: { default: 12, m: 5 } }, { colspan: { default: 12, m: 4 } }, { colspan: { default: 12, m: 3 } }]}>
-        <Container header={<Header variant="h2">Tiến độ của bạn</Header>}>
-          <SpaceBetween size="m">
-            <ProgressBar
-              value={percent}
-              description={`${readCount} trên ${chapters.length} chương đã đánh dấu`}
-              additionalInfo={`Điểm luyện cao nhất: ${progress.quizBest == null ? 'chưa làm' : `${progress.quizBest}/${questions.length}`}`}
-              status={percent === 100 ? 'success' : 'in-progress'}
-            />
-            <KeyValuePairs
-              columns={2}
-              items={[
-                { label: 'Chương đã đọc', value: `${readCount}/${chapters.length}` },
-                { label: 'Lượt luyện tập', value: progress.quizAttempts ?? 0 },
-                { label: 'Flashcard', value: flashcards.length },
-                { label: 'Câu hỏi', value: questions.length },
-              ]}
-            />
-          </SpaceBetween>
-        </Container>
+    <aside className="rail">
+      <nav aria-label="Nội dung phòng học">
+        <ul className="rail-nav">
+          <li>
+            <button
+              type="button"
+              className={section === 'tong-quan' ? 'is-active' : ''}
+              aria-current={section === 'tong-quan' ? 'page' : undefined}
+              onClick={() => onGo('tong-quan')}
+            >
+              Bảng điều khiển
+            </button>
+          </li>
+        </ul>
 
-        <Container header={<Header variant="h2">Gợi ý tiếp theo</Header>}>
-          <SpaceBetween size="s">
-            <Box variant="p">
-              {readCount === chapters.length
-                ? 'Bạn đã đi hết sáu chương. Chuyển sang phần luyện tập để kiểm tra lại những chương yếu.'
-                : `Chương ${nextChapter.number} đang mở: ${nextChapter.title}`}
-            </Box>
-            <Box variant="p" color="text-body-secondary">
-              {nextChapter.hook}
-            </Box>
-            <SpaceBetween direction="horizontal" size="xs">
-              <Button variant="primary" onClick={() => onOpen(nextChapter.id)}>
-                Vào chương {nextChapter.number}
-              </Button>
-              <Button onClick={onPractice}>Luyện trắc nghiệm</Button>
-            </SpaceBetween>
-          </SpaceBetween>
-        </Container>
+        <p className="rail-label">Sáu chương</p>
+        <ul className="rail-nav">
+          {chapters.map((chapter) => {
+            const done = Boolean(progress.read?.[chapter.id]);
+            return (
+              <li key={chapter.id}>
+                <button
+                  type="button"
+                  className={section === chapter.id ? 'is-active' : ''}
+                  aria-current={section === chapter.id ? 'page' : undefined}
+                  onClick={() => onGo(chapter.id)}
+                >
+                  <span className="rail-no">{chapter.number}</span>
+                  <span>{chapter.title}</span>
+                  {done && (
+                    <span className="rail-done" aria-label="đã đánh dấu học xong">
+                      ✓
+                    </span>
+                  )}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
 
-        <Container header={<Header variant="h2">Ghi chú sử dụng</Header>}>
-          <SpaceBetween size="s">
-            <Box variant="small" color="text-body-secondary">
-              Tiến độ được lưu trong trình duyệt này. Đổi máy hoặc xóa dữ liệu trình duyệt thì tiến độ
-              không đi theo.
-            </Box>
-            <Box variant="small" color="text-body-secondary">
-              Nội dung là bản tóm tắt để tự học, không thay thế giáo trình và hướng dẫn của giảng viên.
-            </Box>
-          </SpaceBetween>
-        </Container>
-      </Grid>
-
-      <Table
-        columnDefinitions={columns}
-        items={chapters}
-        variant="container"
-        header={
-          <Header variant="h2" counter={`(${chapters.length})`} description="Sáu chương của MLN122, sắp theo thứ tự giáo trình.">
-            Bản đồ môn học
-          </Header>
-        }
-        footer={<Box color="text-body-secondary">Nhấn vào tên chương để mở phần học tương ứng.</Box>}
-      />
-    </SpaceBetween>
+        <p className="rail-label">Luyện và tra cứu</p>
+        <ul className="rail-nav">
+          {NAV.slice(1).map((item) => (
+            <li key={item.id}>
+              <button
+                type="button"
+                className={section === item.id ? 'is-active' : ''}
+                aria-current={section === item.id ? 'page' : undefined}
+                onClick={() => onGo(item.id)}
+              >
+                {item.label}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </aside>
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* Trang chương                                                        */
-/* ------------------------------------------------------------------ */
-
-function FlashcardDeck({ items, progress, onStar }) {
+function Meter({ value, label }) {
   return (
-    <Cards
-      items={items}
-      cardDefinition={{
-        header: (item) => (
-          <SpaceBetween direction="horizontal" size="xs">
-            <Box variant="span" fontWeight="bold">
-              {item.front}
-            </Box>
-          </SpaceBetween>
-        ),
-        sections: [
-          {
-            id: 'answer',
-            content: (item) => (
-              <Box color={progress[item.key] ? 'text-body-default' : 'text-status-inactive'}>
-                {progress[item.key] ? item.back : 'Tự trả lời trước, rồi mở đáp án.'}
-              </Box>
-            ),
-          },
-        ],
-        footer: (item) => (
-          <SpaceBetween direction="horizontal" size="xs">
-            <Button variant="inline-link" onClick={() => onStar(item.key)}>
-              {progress[item.key] ? 'Thu đáp án' : 'Hiện đáp án'}
-            </Button>
-            <Box variant="small" color="text-body-secondary">
-              Chương {item.chapterNo} · {progress[item.key] ? 'đã mở đáp án' : 'chưa mở đáp án'}
-            </Box>
-          </SpaceBetween>
-        ),
-      }}
-      cardsPerRow={[{ cards: 1 }, { minWidth: 520, cards: 2 }]}
-      empty={<Box variant="p">Chưa có flashcard cho chương này.</Box>}
-    />
+    <div className="meter-wrap">
+      <div
+        className="meter"
+        role="progressbar"
+        aria-valuenow={Math.round(value)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={label}
+      >
+        <span style={{ width: `${Math.max(0, Math.min(100, value))}%` }} />
+      </div>
+      <span className="meter-value num">{Math.round(value)}%</span>
+    </div>
+  );
+}
+
+function Overview({ progress, onGo }) {
+  const done = readCount(progress, chapters);
+  const percent = (done / chapters.length) * 100;
+  const next = chapters.find((chapter) => !progress.read?.[chapter.id]) ?? chapters[0];
+
+  return (
+    <>
+      <div className="overview">
+        <div className="panel">
+          <div className="panel-head">Tiến độ của bạn</div>
+          <div className="panel-body">
+            <p className="big-number">
+              <span className="num">{done}</span>
+              <span className="big-number-of">/ {chapters.length} chương đã đánh dấu</span>
+            </p>
+            <Meter value={percent} label="Tỉ lệ chương đã hoàn thành" />
+            <dl className="facts">
+              <div>
+                <dt>Điểm luyện cao nhất</dt>
+                <dd>{progress.quizBest == null ? 'chưa làm' : `${progress.quizBest}/${questions.length}`}</dd>
+              </div>
+              <div>
+                <dt>Lượt luyện</dt>
+                <dd>{progress.quizAttempts ?? 0}</dd>
+              </div>
+              <div>
+                <dt>Thẻ ghi nhớ</dt>
+                <dd>{cards.length}</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <div className="panel">
+          <div className="panel-head">Việc tiếp theo</div>
+          <div className="panel-body">
+            <h2 className="panel-title">
+              Chương {next.number}. {next.title}
+            </h2>
+            <p className="panel-text">{next.hook}</p>
+            <div className="panel-actions">
+              <button type="button" className="btn btn-primary btn-sm" onClick={() => onGo(next.id)}>
+                Mở chương {next.number}
+              </button>
+              <button type="button" className="btn btn-quiet btn-sm" onClick={() => onGo('luyen-tap')}>
+                Làm trắc nghiệm
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section className="stage-section">
+        <h2 className="stage-sub">Bản đồ sáu chương</h2>
+        <ul className="rows">
+          {chapters.map((chapter) => {
+            const status = chapterStatus(progress, chapter);
+            return (
+              <li key={chapter.id} className="row">
+                <span className="row-no num">{chapter.number}</span>
+                <span className="row-main">
+                  <span className="row-title">{chapter.title}</span>
+                  <span className="row-sub">{chapter.fullTitle}</span>
+                </span>
+                <span className={status.type === 'success' ? 'row-status is-done' : 'row-status'}>
+                  {status.label}
+                </span>
+                <span className="row-meta">{chapter.level}</span>
+                <span className="row-meta row-time num">{chapter.time} phút</span>
+                <button type="button" className="btn btn-quiet btn-sm" onClick={() => onGo(chapter.id)}>
+                  Mở
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+        <p className="fineprint">
+          Tiến độ được lưu trong trình duyệt này. Đổi máy hoặc xoá dữ liệu trình duyệt thì tiến độ
+          không đi theo. Nội dung là bản tóm tắt để tự học, không thay thế giáo trình.
+        </p>
+      </section>
+    </>
+  );
+}
+
+function Flashcards({ items, revealed, onReveal }) {
+  return (
+    <ul className="cards">
+      {items.map((card) => {
+        const open = Boolean(revealed[card.key]);
+        return (
+          <li className="card" key={card.key}>
+            <p className="card-front">{card.front}</p>
+            <p className={open ? 'card-back is-open' : 'card-back'}>
+              {open ? card.back : 'Tự trả lời trước khi mở đáp án.'}
+            </p>
+            <div className="card-foot">
+              <button type="button" className="btn btn-quiet btn-sm" onClick={() => onReveal(card.key)}>
+                {open ? 'Thu đáp án' : 'Hiện đáp án'}
+              </button>
+              <span className="card-tag">Chương {card.chapterNo}</span>
+            </div>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 
 function ChapterView({ chapter, progress, onToggleRead, revealed, onReveal }) {
-  const read = yes(progress.read?.[chapter.id]);
-  const conceptColumns = [
-    { id: 'term', header: 'Thuật ngữ', cell: (item) => <Box fontWeight="bold">{item.term}</Box>, width: 230 },
-    { id: 'definition', header: 'Nội dung', cell: (item) => item.definition },
-    {
-      id: 'example',
-      header: 'Ví dụ đời thường',
-      cell: (item) => <Box color="text-body-secondary">{item.example}</Box>,
-      width: 320,
-    },
-  ];
+  const done = Boolean(progress.read?.[chapter.id]);
+  const chapterCards = chapter.flashcards.map((card, index) => ({
+    ...card,
+    key: `${chapter.id}-${index}`,
+    chapterNo: chapter.number,
+  }));
 
   return (
-    <SpaceBetween size="l">
-      <Alert type="info" header="Câu hỏi dẫn vào chương">
-        {chapter.hook}
-      </Alert>
+    <>
+      <div className="panel hook">
+        <div className="panel-head">Câu hỏi dẫn vào chương</div>
+        <p className="hook-text">{chapter.hook}</p>
+      </div>
 
-      <Tabs
-        tabs={[
-          {
-            label: 'Khái niệm',
-            id: 'khai-niem',
-            content: (
-              <SpaceBetween size="m">
-                <Container header={<Header variant="h2">Ý chính cần nắm</Header>}>
-                  <Box variant="p">{chapter.summary}</Box>
-                </Container>
-                <Table
-                  columnDefinitions={conceptColumns}
-                  items={chapter.concepts}
-                  variant="container"
-                  header={<Header variant="h2" counter={`(${chapter.concepts.length})`}>Bảng khái niệm</Header>}
-                  stickyHeader
-                />
-                <Alert type="success" header="Một câu để nhớ">
-                  {chapter.takeaway}
-                </Alert>
-              </SpaceBetween>
-            ),
-          },
-          {
-            label: 'Flashcard',
-            id: 'flashcard',
-            content: (
-              <FlashcardDeck
-                items={chapter.flashcards.map((card, index) => ({
-                  ...card,
-                  key: `${chapter.id}-${index}`,
-                  chapterNo: chapter.number,
-                }))}
-                progress={revealed}
-                onStar={onReveal}
-              />
-            ),
-          },
-        ]}
-      />
+      <section className="stage-section">
+        <h2 className="stage-sub">Ý chính cần nắm</h2>
+        <p id="tom-tat">{chapter.summary}</p>
+      </section>
 
-      <Container
-        header={
-          <Header
-            variant="h2"
-            description="Đánh dấu khi bạn đã đọc xong phần này — bảng điều khiển sẽ ghi nhận."
-            actions={
-              <Button variant={read ? 'normal' : 'primary'} onClick={() => onToggleRead(chapter.id)}>
-                {read ? 'Bỏ đánh dấu' : 'Đánh dấu đã học'}
-              </Button>
-            }
-          >
-            Trạng thái chương
-          </Header>
-        }
-      >
-        <StatusIndicator type={read ? 'success' : 'pending'}>
-          {read ? 'Đã hoàn thành chương này' : 'Chưa đánh dấu hoàn thành'}
-        </StatusIndicator>
-      </Container>
-    </SpaceBetween>
+      <section className="stage-section">
+        <h2 className="stage-sub">Bảng khái niệm</h2>
+        <dl className="concepts">
+          {chapter.concepts.map((concept) => (
+            <div className="concept" key={concept.term}>
+              <dt>{concept.term}</dt>
+              <dd>
+                {concept.definition}
+                <span className="concept-example">
+                  <b>Ví dụ.</b> {concept.example}
+                </span>
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      <section className="stage-section">
+        <h2 className="stage-sub">Thẻ ghi nhớ của chương</h2>
+        <Flashcards items={chapterCards} revealed={revealed} onReveal={onReveal} />
+      </section>
+
+      <section className="stage-section">
+        <div className="takeaway">
+          <p>
+            <b>Một câu để nhớ.</b> {chapter.takeaway}
+          </p>
+        </div>
+        <div className="panel">
+          <div className="panel-body panel-inline">
+            <p>
+              {done
+                ? 'Bạn đã đánh dấu chương này là đã học.'
+                : 'Khi đọc xong phần khái niệm và thẻ ghi nhớ, đánh dấu để bảng điều khiển ghi nhận.'}
+            </p>
+            <button
+              type="button"
+              className={done ? 'btn btn-quiet btn-sm' : 'btn btn-primary btn-sm'}
+              onClick={() => onToggleRead(chapter.id)}
+            >
+              {done ? 'Bỏ đánh dấu' : 'Đánh dấu đã học'}
+            </button>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }
-
-/* ------------------------------------------------------------------ */
-/* Luyện tập                                                           */
-/* ------------------------------------------------------------------ */
 
 function Practice({ progress, onFinish }) {
   const [index, setIndex] = useState(0);
@@ -310,7 +305,10 @@ function Practice({ progress, onFinish }) {
   const question = questions[index];
   const chosen = answers[question.key];
   const answeredCount = Object.keys(answers).length;
-  const score = questions.reduce((total, item) => total + (answers[item.key] === item.answer ? 1 : 0), 0);
+  const score = questions.reduce(
+    (total, item) => total + (answers[item.key] === item.answer ? 1 : 0),
+    0,
+  );
 
   const restart = () => {
     setAnswers({});
@@ -319,179 +317,182 @@ function Practice({ progress, onFinish }) {
   };
 
   if (finished) {
-    const percent = Math.round((score / questions.length) * 100);
+    const percent = (score / questions.length) * 100;
     return (
-      <SpaceBetween size="l">
-        <Container header={<Header variant="h2">Kết quả lượt này</Header>}>
-          <SpaceBetween size="m">
-            <Box variant="h1">
-              {score}
-              <Box variant="span" color="text-body-secondary">
-                /{questions.length}
-              </Box>
-            </Box>
-            <ProgressBar
-              value={percent}
-              status={percent >= 80 ? 'success' : percent >= 50 ? 'in-progress' : 'error'}
-              description={percent >= 80 ? 'Nắm khá chắc. Thử lại để giữ phong độ.' : 'Còn vài chương cần đọc lại phần khái niệm.'}
-            />
-            <SpaceBetween direction="horizontal" size="xs">
-              <Button variant="primary" onClick={restart}>
+      <>
+        <div className="panel">
+          <div className="panel-head">Kết quả lượt này</div>
+          <div className="panel-body">
+            <p className="big-number">
+              <span className="num">{score}</span>
+              <span className="big-number-of">/ {questions.length} câu đúng</span>
+            </p>
+            <Meter value={percent} label="Tỉ lệ câu trả lời đúng" />
+            <p className="panel-text">
+              {percent >= 80
+                ? 'Nắm khá chắc. Làm lại lần nữa để giữ phong độ.'
+                : 'Còn vài chương nên đọc lại phần khái niệm trước khi thi.'}
+            </p>
+            <div className="panel-actions">
+              <button type="button" className="btn btn-primary btn-sm" onClick={restart}>
                 Làm lại
-              </Button>
-              <Button onClick={() => setFinished(false)}>Xem lại đáp án</Button>
-            </SpaceBetween>
-          </SpaceBetween>
-        </Container>
+              </button>
+              <button type="button" className="btn btn-quiet btn-sm" onClick={() => setFinished(false)}>
+                Xem lại đáp án
+              </button>
+            </div>
+          </div>
+        </div>
 
-        <Table
-          variant="container"
-          header={<Header variant="h2">Chi tiết từng câu</Header>}
-          columnDefinitions={[
-            { id: 'no', header: '#', cell: (item) => questions.indexOf(item) + 1, width: 60 },
-            { id: 'chapter', header: 'Chương', cell: (item) => `${item.chapterNo} · ${item.chapterTitle}`, width: 240 },
-            { id: 'q', header: 'Câu hỏi', cell: (item) => item.q },
-            {
-              id: 'result',
-              header: 'Kết quả',
-              cell: (item) =>
-                answers[item.key] === item.answer ? (
-                  <StatusIndicator type="success">Đúng</StatusIndicator>
-                ) : (
-                  <StatusIndicator type="error">Sai</StatusIndicator>
-                ),
-              width: 120,
-            },
-            {
-              id: 'answer',
-              header: 'Đáp án đúng',
-              cell: (item) => item.options[item.answer],
-              width: 300,
-            },
-          ]}
-          items={questions}
-        />
-      </SpaceBetween>
+        <section className="stage-section">
+          <h2 className="stage-sub">Chi tiết từng câu</h2>
+          <ul className="rows">
+            {questions.map((item, position) => {
+              const right = answers[item.key] === item.answer;
+              return (
+                <li className="row row-quiet" key={item.key}>
+                  <span className="row-no num">{position + 1}</span>
+                  <span className="row-main">
+                    <span className="row-title">{item.q}</span>
+                    <span className="row-sub">
+                      Chương {item.chapterNo}. Đáp án đúng: {item.options[item.answer]}
+                    </span>
+                  </span>
+                  <span className={right ? 'row-status is-done' : 'row-status is-wrong'}>
+                    {right ? 'Đúng' : 'Sai'}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      </>
     );
   }
 
   return (
-    <SpaceBetween size="l">
-      <Container
-        header={
-          <Header
-            variant="h2"
-            description={`Chương ${question.chapterNo} · ${question.chapterTitle}`}
-            actions={<Box color="text-body-secondary">{answeredCount}/{questions.length} câu đã trả lời</Box>}
-          >
-            Câu {index + 1}
-          </Header>
-        }
-      >
-        <SpaceBetween size="m">
-          <ProgressBar value={Math.round((answeredCount / questions.length) * 100)} description={`Điểm hiện tại: ${score}/${questions.length}`} />
+    <div className="panel">
+      <div className="panel-head">
+        <span>Câu {index + 1} trên {questions.length}</span>
+        <span>Chương {question.chapterNo}. {question.chapterTitle}</span>
+      </div>
+      <div className="panel-body">
+        <Meter value={(answeredCount / questions.length) * 100} label="Số câu đã trả lời" />
 
-          <Form>
-            <FormField label={question.q} description="Chọn một đáp án. Giải thích hiện ra ngay sau khi chọn.">
-              <RadioGroup
-                value={chosen === undefined ? null : String(chosen)}
-                onChange={({ detail }) => setAnswers((current) => ({ ...current, [question.key]: Number(detail.value) }))}
-                items={question.options.map((option, optionIndex) => ({
-                  value: String(optionIndex),
-                  label: option,
-                }))}
-              />
-            </FormField>
-          </Form>
-
-          {chosen !== undefined && (
-            <Alert type={chosen === question.answer ? 'success' : 'error'} header={chosen === question.answer ? 'Đúng' : 'Chưa đúng'}>
-              {question.explain}
-            </Alert>
-          )}
-
-          <SpaceBetween direction="horizontal" size="xs">
-            <Button disabled={index === 0} onClick={() => setIndex((current) => current - 1)}>
-              Câu trước
-            </Button>
-            {index === questions.length - 1 ? (
-              <Button
-                variant="primary"
-                disabled={chosen === undefined}
-                onClick={() => {
-                  setFinished(true);
-                  onFinish(score);
-                }}
+        <form
+          className="quiz"
+          onSubmit={(event) => {
+            event.preventDefault();
+            if (chosen === undefined) return;
+            if (index === questions.length - 1) {
+              setFinished(true);
+              onFinish(score);
+            } else {
+              setIndex((current) => current + 1);
+            }
+          }}
+        >
+          <fieldset className="quiz-fieldset">
+            <legend className="quiz-legend">{question.q}</legend>
+            {question.options.map((option, position) => (
+              <label
+                key={option}
+                className={
+                  'option' +
+                  (chosen === position ? ' is-chosen' : '') +
+                  (chosen !== undefined && position === question.answer ? ' is-correct' : '')
+                }
               >
-                Xem kết quả
-              </Button>
-            ) : (
-              <Button
-                variant="primary"
-                disabled={chosen === undefined}
-                onClick={() => setIndex((current) => current + 1)}
-              >
-                Câu tiếp
-              </Button>
+                <input
+                  type="radio"
+                  name={question.key}
+                  value={position}
+                  checked={chosen === position}
+                  onChange={() =>
+                    setAnswers((current) => ({ ...current, [question.key]: position }))
+                  }
+                />
+                <span className="option-key num">{String.fromCharCode(65 + position)}</span>
+                <span>{option}</span>
+              </label>
+            ))}
+          </fieldset>
+
+          <div aria-live="polite">
+            {chosen !== undefined && (
+              <p className={chosen === question.answer ? 'feedback is-right' : 'feedback is-wrong'}>
+                <b>{chosen === question.answer ? 'Đúng.' : 'Chưa đúng.'}</b> {question.explain}
+              </p>
             )}
-            <Button variant="link" onClick={() => { setAnswers({}); setIndex(0); }}>
-              Làm lại từ đầu
-            </Button>
-          </SpaceBetween>
-        </SpaceBetween>
-      </Container>
+          </div>
 
-      <Box variant="small" color="text-body-secondary">
-        Lượt luyện tốt nhất được lưu trên máy: {progress.quizBest == null ? 'chưa có' : `${progress.quizBest}/${questions.length}`}.
-      </Box>
-    </SpaceBetween>
+          <div className="quiz-actions">
+            <button
+              type="button"
+              className="btn btn-quiet btn-sm"
+              onClick={() => setIndex((current) => Math.max(0, current - 1))}
+              disabled={index === 0}
+            >
+              Câu trước
+            </button>
+            <button type="submit" className="btn btn-primary btn-sm" disabled={chosen === undefined}>
+              {index === questions.length - 1 ? 'Xem kết quả' : 'Câu tiếp'}
+            </button>
+            <button type="button" className="btn btn-quiet btn-sm" onClick={restart}>
+              Làm lại từ đầu
+            </button>
+          </div>
+        </form>
+
+        <p className="fineprint">
+          Lượt luyện tốt nhất được lưu trên máy:{' '}
+          {progress.quizBest == null ? 'chưa có' : `${progress.quizBest}/${questions.length}`}.
+        </p>
+      </div>
+    </div>
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* Sổ tay                                                              */
-/* ------------------------------------------------------------------ */
-
 function Notebook({ revealed, onReveal }) {
-  const [chapterId, setChapterId] = useState('all');
+  const [filter, setFilter] = useState('all');
   const items = useMemo(
-    () => (chapterId === 'all' ? flashcards : flashcards.filter((card) => card.chapterId === chapterId)),
-    [chapterId],
+    () => (filter === 'all' ? cards : cards.filter((card) => card.chapterId === filter)),
+    [filter],
   );
 
   return (
-    <SpaceBetween size="l">
-      <Container>
-        <SpaceBetween size="m">
-          <Box variant="p">
-            Đọc câu hỏi, tự trả lời thành tiếng, rồi mở đáp án. Đây là cách nhanh nhất để biết mình đã
-            hiểu hay chỉ đang nhận ra chữ quen.
-          </Box>
-          <FormField label="Lọc theo chương">
-            <Select
-              selectedOption={
-                chapterId === 'all'
-                  ? { value: 'all', label: 'Tất cả các chương' }
-                  : { value: chapterId, label: chapters.find((chapter) => chapter.id === chapterId).fullTitle }
-              }
-              onChange={({ detail }) => setChapterId(detail.selectedOption.value)}
-              options={[
-                { value: 'all', label: 'Tất cả các chương' },
-                ...chapters.map((chapter) => ({ value: chapter.id, label: `${chapter.number} · ${chapter.title}` })),
-              ]}
-            />
-          </FormField>
-        </SpaceBetween>
-      </Container>
+    <>
+      <p className="lede">
+        Đọc câu hỏi, tự trả lời thành tiếng, rồi mở đáp án. Đây là cách nhanh nhất để biết mình đã
+        hiểu hay chỉ đang nhận ra chữ quen.
+      </p>
 
-      <FlashcardDeck items={items} progress={revealed} onStar={onReveal} />
-    </SpaceBetween>
+      <div className="chips" role="group" aria-label="Lọc thẻ theo chương">
+        <button
+          type="button"
+          className={filter === 'all' ? 'chip is-active' : 'chip'}
+          aria-pressed={filter === 'all'}
+          onClick={() => setFilter('all')}
+        >
+          Tất cả {cards.length} thẻ
+        </button>
+        {chapters.map((chapter) => (
+          <button
+            key={chapter.id}
+            type="button"
+            className={filter === chapter.id ? 'chip is-active' : 'chip'}
+            aria-pressed={filter === chapter.id}
+            onClick={() => setFilter(chapter.id)}
+          >
+            Chương {chapter.number}
+          </button>
+        ))}
+      </div>
+
+      <Flashcards items={items} revealed={revealed} onReveal={onReveal} />
+    </>
   );
 }
-
-/* ------------------------------------------------------------------ */
-/* Máy tính giá trị thặng dư                                          */
-/* ------------------------------------------------------------------ */
 
 function Calculator() {
   const [price, setPrice] = useState(45000);
@@ -501,130 +502,114 @@ function Calculator() {
 
   const { c, v, m, rate, shares } = computeSurplus({ price, materials, depreciation, wage });
 
-  return (
-    <SpaceBetween size="l">
-      <Container header={<Header variant="h2">Tham số một ly trà sữa</Header>}>
-        <Form>
-          <SpaceBetween size="xl">
-            <FormField label="Giá bán" description="Doanh thu bạn nhận được từ một sản phẩm." stretch>
-              <Slider
-                value={price}
-                min={15000}
-                max={90000}
-                step={1000}
-                onChange={({ detail }) => setPrice(detail.value)}
-                formatValue={(value) => `${vnd(value)}đ`}
-              />
-            </FormField>
-            <FormField label="Nguyên liệu" description="Trà, sữa, trân châu, ly, ống hút." stretch>
-              <Slider
-                value={materials}
-                min={0}
-                max={50000}
-                step={500}
-                onChange={({ detail }) => setMaterials(detail.value)}
-                formatValue={(value) => `${vnd(value)}đ`}
-              />
-            </FormField>
-            <FormField label="Khấu hao máy móc, mặt bằng" description="Phần giá trị tư liệu sản xuất chuyển vào sản phẩm." stretch>
-              <Slider
-                value={depreciation}
-                min={0}
-                max={30000}
-                step={500}
-                onChange={({ detail }) => setDepreciation(detail.value)}
-                formatValue={(value) => `${vnd(value)}đ`}
-              />
-            </FormField>
-            <FormField label="Tiền công cho người pha chế" description="Giá trị sức lao động được trả cho một sản phẩm." stretch>
-              <Slider
-                value={wage}
-                min={0}
-                max={40000}
-                step={500}
-                onChange={({ detail }) => setWage(detail.value)}
-                formatValue={(value) => `${vnd(value)}đ`}
-              />
-            </FormField>
-          </SpaceBetween>
-        </Form>
-      </Container>
+  const fields = [
+    { id: 'gia', label: 'Giá bán', value: price, set: setPrice, min: 15000, max: 90000, step: 1000 },
+    { id: 'nguyen-lieu', label: 'Nguyên liệu', value: materials, set: setMaterials, min: 0, max: 50000, step: 500 },
+    { id: 'khau-hao', label: 'Khấu hao máy và mặt bằng', value: depreciation, set: setDepreciation, min: 0, max: 30000, step: 500 },
+    { id: 'tien-cong', label: 'Tiền công người pha chế', value: wage, set: setWage, min: 0, max: 40000, step: 500 },
+  ];
 
-      <Container header={<Header variant="h2">Kết quả</Header>}>
-        <SpaceBetween size="l">
-          <div className="calc-bar" role="img" aria-label={`Cơ cấu giá bán: c ${vnd(c)} đồng, v ${vnd(v)} đồng, m ${vnd(m)} đồng`}>
-            <span className="calc-seg calc-c" style={{ width: `${shares.c}%` }} />
-            <span className="calc-seg calc-v" style={{ width: `${shares.v}%` }} />
-            <span className="calc-seg calc-m" style={{ width: `${shares.m}%` }} />
+  return (
+    <div className="counter">
+      <div className="counter-panel">
+        <div className="counter-head">
+          <span>Tham số một ly</span>
+          <span>Kéo để thay đổi</span>
+        </div>
+        <div className="counter-body">
+          {fields.map((field) => (
+            <div className="field" key={field.id}>
+              <label className="field-label" htmlFor={field.id}>
+                <span>{field.label}</span>
+                <output htmlFor={field.id}>{vnd(field.value)}đ</output>
+              </label>
+              <input
+                id={field.id}
+                className="range"
+                type="range"
+                min={field.min}
+                max={field.max}
+                step={field.step}
+                value={field.value}
+                onChange={(event) => field.set(Number(event.target.value))}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="counter-panel">
+        <div className="counter-head">
+          <span>Kết quả</span>
+          <span>Tính theo m = giá bán − c − v</span>
+        </div>
+        <div className="counter-body">
+          <div className="split" aria-hidden="true">
+            <span className="split-c" style={{ width: `${shares.c}%` }} />
+            <span className="split-v" style={{ width: `${shares.v}%` }} />
+            <span className="split-m" style={{ width: `${shares.m}%` }} />
+          </div>
+          <div className="legend">
+            <span>
+              <i style={{ background: 'var(--rule)' }} /> c
+            </span>
+            <span>
+              <i style={{ background: 'var(--board)' }} /> v
+            </span>
+            <span>
+              <i style={{ background: 'var(--yellow)' }} /> m
+            </span>
           </div>
 
-          <Grid gridDefinition={[{ colspan: { default: 6, m: 3 } }, { colspan: { default: 6, m: 3 } }, { colspan: { default: 6, m: 3 } }, { colspan: { default: 6, m: 3 } }]}>
-            <div className="calc-cell">
-              <span className="calc-label">c · bất biến</span>
-              <span className="calc-value">{vnd(c)}đ</span>
+          <div className="readout">
+            <div>
+              <span className="readout-label">Tư bản bất biến c</span>
+              <span className="readout-value">
+                {vnd(c)}
+                <small>đ</small>
+              </span>
             </div>
-            <div className="calc-cell">
-              <span className="calc-label">v · khả biến</span>
-              <span className="calc-value">{vnd(v)}đ</span>
+            <div>
+              <span className="readout-label">Tư bản khả biến v</span>
+              <span className="readout-value">
+                {vnd(v)}
+                <small>đ</small>
+              </span>
             </div>
-            <div className={m < 0 ? 'calc-cell is-negative' : 'calc-cell is-accent'}>
-              <span className="calc-label">m · thặng dư</span>
-              <span className="calc-value">{vnd(m)}đ</span>
+            <div className={m < 0 ? '' : 'is-m'}>
+              <span className="readout-label">Giá trị thặng dư m</span>
+              <span className="readout-value">
+                {vnd(m)}
+                <small>đ</small>
+              </span>
             </div>
-            <div className="calc-cell">
-              <span className="calc-label">m′ = m / v</span>
-              <span className="calc-value">{v === 0 ? '—' : `${rate.toFixed(0)}%`}</span>
+            <div>
+              <span className="readout-label">Tỷ suất m′</span>
+              <span className="readout-value">
+                {v === 0 ? '—' : rate.toFixed(0)}
+                <small>%</small>
+              </span>
             </div>
-          </Grid>
+          </div>
 
-          <Alert type={m < 0 ? 'error' : m === 0 ? 'warning' : 'info'} header={m < 0 ? 'Không có giá trị thặng dư' : 'Đọc kết quả thế nào'}>
+          <p className={'counter-note' + (m < 0 ? ' is-loss' : '')}>
             {m < 0
-              ? 'Giá bán thấp hơn chi phí: quán lỗ, không có phần giá trị mới dôi ra. Hạ nguyên liệu hoặc tăng giá bán để quay lại vùng có thặng dư.'
-              : `c = ${vnd(c)}đ là phần giá trị được chuyển nguyên vẹn vào sản phẩm. v = ${vnd(v)}đ tạo ra giá trị mới ${vnd(v + m)}đ. Phần dôi ra ${vnd(m)}đ chính là giá trị thặng dư; tỷ suất m′ cho biết mỗi 100đ tiền công sinh ra bao nhiêu đồng thặng dư.`}
-          </Alert>
-        </SpaceBetween>
-      </Container>
-    </SpaceBetween>
+              ? 'Giá bán thấp hơn chi phí nên không có phần dôi ra. Quán đang lỗ.'
+              : `c = ${vnd(c)}đ được chuyển nguyên vẹn vào sản phẩm. v = ${vnd(v)}đ tạo ra giá trị mới ${vnd(v + m)}đ; phần dôi ra ${vnd(m)}đ là giá trị thặng dư.`}
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* Khung ứng dụng                                                      */
-/* ------------------------------------------------------------------ */
-
-const navItems = [
-  { type: 'link', text: 'Bảng điều khiển', href: '#tong-quan' },
-  {
-    type: 'section',
-    title: 'Sáu chương',
-    items: chapters.map((chapter) => ({
-      type: 'link',
-      text: `${chapter.number} · ${chapter.title}`,
-      href: `#${chapter.id}`,
-    })),
-  },
-  {
-    type: 'section',
-    title: 'Luyện và tra cứu',
-    items: [
-      { type: 'link', text: 'Trắc nghiệm', href: '#luyen-tap' },
-      { type: 'link', text: 'Sổ tay flashcard', href: '#so-tay' },
-      { type: 'link', text: 'Máy tính giá trị thặng dư', href: '#may-tinh' },
-    ],
-  },
-];
-
 export default function StudioApp() {
   const [section, setSection] = useState('tong-quan');
-  const [navOpen, setNavOpen] = useState(true);
   const [progress, setProgress] = useState(EMPTY_PROGRESS);
   const [hydrated, setHydrated] = useState(false);
   const [revealed, setRevealed] = useState({});
-  const [flash, setFlash] = useState([]);
 
   useEffect(() => {
-    applyStudioTheme();
-    setNavOpen(window.innerWidth >= 1000);
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) {
@@ -634,10 +619,12 @@ export default function StudioApp() {
     } catch {
       /* dữ liệu hỏng thì bắt đầu lại */
     }
+
     const params = new URLSearchParams(window.location.search);
     const target = params.get('chuong');
     if (chapters.some((chapter) => chapter.id === target)) setSection(target);
-    if (window.location.hash === '#may-tinh') setSection('may-tinh');
+    if (window.location.hash === '#bang-tinh') setSection('bang-tinh');
+
     setHydrated(true);
   }, []);
 
@@ -652,147 +639,95 @@ export default function StudioApp() {
 
   const go = (next) => {
     setSection(next);
-    if (window.innerWidth < 1000) setNavOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const toggleRead = (chapterId) => {
+  const toggleRead = (chapterId) =>
     setProgress((current) => ({
       ...current,
       read: { ...current.read, [chapterId]: !current.read?.[chapterId] },
     }));
-  };
 
-  const finishQuiz = (score) => {
+  const finishQuiz = (score) =>
     setProgress((current) => ({
       ...current,
       quizBest: Math.max(current.quizBest ?? 0, score),
       quizAttempts: (current.quizAttempts ?? 0) + 1,
     }));
-  };
 
-  const resetProgress = () => {
-    setProgress(EMPTY_PROGRESS);
-    setFlash([{ type: 'success', content: 'Đã đặt lại tiến độ trên trình duyệt này.', dismissible: true, id: 'reset' }]);
-  };
+  const resetProgress = () => setProgress({ ...EMPTY_PROGRESS, read: {} });
 
-  const activeChapter = chapters.find((chapter) => chapter.id === section);
-  const readCount = chapters.filter((chapter) => yes(progress.read?.[chapter.id])).length;
+  const chapter = chapters.find((item) => item.id === section);
 
-  let page;
-  if (section === 'tong-quan') {
-    page = (
-      <Overview
-        progress={progress}
-        onOpen={go}
-        onPractice={() => go('luyen-tap')}
-      />
-    );
-  } else if (activeChapter) {
-    page = (
-      <ChapterView
-        chapter={activeChapter}
-        progress={progress}
-        onToggleRead={toggleRead}
-        revealed={revealed}
-        onReveal={(key) => setRevealed((current) => ({ ...current, [key]: !current[key] }))}
-      />
-    );
-  } else if (section === 'luyen-tap') {
-    page = <Practice progress={progress} onFinish={finishQuiz} />;
-  } else if (section === 'so-tay') {
-    page = (
-      <Notebook
-        revealed={revealed}
-        onReveal={(key) => setRevealed((current) => ({ ...current, [key]: !current[key] }))}
-      />
-    );
-  } else {
-    page = <Calculator />;
-  }
-
-  const titles = {
-    'tong-quan': {
-      title: 'Bảng điều khiển',
-      description: `${readCount}/${chapters.length} chương đã đánh dấu · ${course.code} · ${course.credits} tín chỉ`,
-    },
-    'luyen-tap': { title: 'Trắc nghiệm', description: `${questions.length} câu hỏi có giải thích, rút từ sáu chương.` },
-    'so-tay': { title: 'Sổ tay flashcard', description: `${flashcards.length} thẻ ghi nhớ để tự kiểm tra.` },
-    'may-tinh': {
-      title: 'Máy tính giá trị thặng dư',
-      description: 'Kéo các thanh trượt để thấy c, v, m và m′ thay đổi theo từng đồng.',
-    },
-  };
-
-  const heading = activeChapter
-    ? {
-        title: `Chương ${activeChapter.number} · ${activeChapter.title}`,
-        description: activeChapter.fullTitle,
-        actions: (
-          <SpaceBetween direction="horizontal" size="xs">
-            <Button onClick={() => go('tong-quan')}>Bảng điều khiển</Button>
-            <Button variant="primary" onClick={() => go('luyen-tap')}>
-              Luyện trắc nghiệm
-            </Button>
-          </SpaceBetween>
-        ),
-      }
-    : titles[section];
+  const head = chapter
+    ? { title: `Chương ${chapter.number}. ${chapter.title}`, sub: chapter.fullTitle }
+    : {
+        'tong-quan': { title: 'Bảng điều khiển', sub: `${course.code}, ${course.name}. ${course.credits} tín chỉ.` },
+        'luyen-tap': { title: 'Trắc nghiệm', sub: `${questions.length} câu hỏi có giải thích, rút từ sáu chương.` },
+        'so-tay': { title: 'Sổ tay ghi nhớ', sub: `${cards.length} thẻ để tự kiểm tra trước khi thi.` },
+        'bang-tinh': {
+          title: 'Bảng tính c, v, m',
+          sub: 'Kéo bốn thanh trượt để thấy giá trị thặng dư và tỷ suất thay đổi theo từng đồng.',
+        },
+      }[section];
 
   return (
     <>
-      <TopNavigation
-        identity={{ href: '/', title: 'Sạp 122 · Phòng học MLN122' }}
-        utilities={[
-          { type: 'button', text: 'Trang chủ', href: '/' },
-          { type: 'button', text: 'Đặt lại tiến độ', onClick: resetProgress },
-        ]}
-      />
-      <AppLayout
-        contentType="default"
-        navigationOpen={navOpen}
-        onNavigationChange={({ detail }) => setNavOpen(detail.open)}
-        navigation={
-          <SideNavigation
-            activeHref={`#${section}`}
-            header={{ href: '/', text: 'Sạp 122' }}
-            items={navItems}
-            onFollow={(event) => {
-              if (event.detail.external) return;
-              event.preventDefault();
-              go(event.detail.href.replace('#', ''));
-            }}
-          />
-        }
-        breadcrumbs={
-          <BreadcrumbGroup
-            items={[
-              { text: 'Sạp 122', href: '/' },
-              { text: 'Phòng học', href: '#' },
-              { text: heading.title },
-            ]}
-            onFollow={(event) => {
-              event.preventDefault();
-              if (event.detail.href === '/') window.location.href = '/';
-            }}
-          />
-        }
-        toolsHide
-        maxContentWidth={1240}
-        content={
-          <SpaceBetween size="l">
-            <Flashbar items={flash} />
-            <Header variant="h1" description={heading.description} actions={heading.actions}>
-              {heading.title}
-            </Header>
-            {page}
-            <Box variant="small" color="text-body-secondary">
-              {course.school} · {course.code} — {course.name} · Nội dung tóm tắt phục vụ tự học, không thay
-              thế giáo trình chính thức.
-            </Box>
-          </SpaceBetween>
-        }
-      />
+      <header className="studio-top">
+        <div className="shell studio-top-inner">
+          <a className="wordmark" href="/">
+            Sạp <span>122</span>
+            <small>Phòng học</small>
+          </a>
+          <div className="studio-top-actions">
+            <a className="btn btn-quiet btn-sm" href="/">
+              Trang chủ
+            </a>
+            <button type="button" className="btn btn-quiet btn-sm" onClick={resetProgress}>
+              Đặt lại tiến độ
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div className="shell studio">
+        <Rail section={section} onGo={go} progress={progress} />
+
+        <main className="stage">
+          <div className="stage-head">
+            <h1>{head.title}</h1>
+            <p className="stage-sub-line">{head.sub}</p>
+          </div>
+
+          {section === 'tong-quan' && <Overview progress={progress} onGo={go} />}
+
+          {chapter && (
+            <ChapterView
+              chapter={chapter}
+              progress={progress}
+              onToggleRead={toggleRead}
+              revealed={revealed}
+              onReveal={(key) => setRevealed((current) => ({ ...current, [key]: !current[key] }))}
+            />
+          )}
+
+          {section === 'luyen-tap' && <Practice progress={progress} onFinish={finishQuiz} />}
+
+          {section === 'so-tay' && (
+            <Notebook
+              revealed={revealed}
+              onReveal={(key) => setRevealed((current) => ({ ...current, [key]: !current[key] }))}
+            />
+          )}
+
+          {section === 'bang-tinh' && <Calculator />}
+
+          <p className="fineprint studio-foot">
+            {course.school}. Môn {course.code}, {course.name}. Nội dung tóm tắt phục vụ tự học, không
+            thay thế giáo trình chính thức hay hướng dẫn của giảng viên.
+          </p>
+        </main>
+      </div>
     </>
   );
 }

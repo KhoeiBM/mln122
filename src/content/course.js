@@ -457,7 +457,7 @@ export const course = {
 
 // Hoá đơn minh hoạ dùng ở phần hero: số liệu giả định để học khái niệm, không phải giá thật.
 export const receipt = {
-  item: 'Trà sữa trân châu · size L',
+  item: 'Trà sữa trân châu size L',
   price: 45000,
   lines: [
     { key: 'c', label: 'Nguyên liệu, khấu hao máy, mặt bằng', value: 18000, note: 'tư bản bất biến' },

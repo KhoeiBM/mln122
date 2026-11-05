@@ -7,10 +7,10 @@ describe('Landing page', () => {
     const { container } = render(<LandingPage />);
     const text = container.textContent;
 
-    expect(text).toContain('Giá trị thặng dư');
+    expect(text).toContain('giá trị thặng dư');
     expect(text).toContain('m′ = m / v');
     expect(container.querySelectorAll('a[href="/studio"]').length).toBeGreaterThan(0);
-    expect(container.querySelectorAll('.chapter-row')).toHaveLength(6);
+    expect(container.querySelectorAll('.shelf-row')).toHaveLength(6);
     expect(text).toContain('Sáu chương');
   });
 });
