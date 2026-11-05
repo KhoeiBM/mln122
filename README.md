@@ -1,41 +1,63 @@
-# Thị trường & lợi ích
+# Sạp 122 — web app học MLN122 (Đại học FPT)
 
-Web học tập tương tác về Chương 5: kinh tế thị trường định hướng xã hội chủ nghĩa và các quan hệ lợi ích kinh tế ở Việt Nam. Nội dung được tóm lược từ chương tài liệu do người dùng cung cấp (trang 153–200); dự án **Đường tới biên giới** được tham khảo về trải nghiệm học tập.
+Landing page + phòng học tương tác cho môn **Kinh tế chính trị Mác – Lênin (MLN122, 3 tín chỉ)**.
+Ý tưởng, chẩn đoán và lộ trình nằm trong [`docs/y-tuong-mln122.md`](docs/y-tuong-mln122.md).
 
-## Nội dung và tính năng
+## Hai bề mặt
 
-- Ba phần kiến thức: mô hình kinh tế, hoàn thiện thể chế và quan hệ lợi ích.
-- Các mảnh ghép đặc trưng, nhóm nhiệm vụ và mối quan hệ có thể tương tác.
-- Một tình huống vận dụng có phản hồi, sáu flashcard và mười câu trắc nghiệm có giải thích.
-- Đánh dấu năm phần đã học và lưu điểm tốt nhất trong `localStorage` của trình duyệt. Xóa dữ liệu trình duyệt sẽ xóa tiến độ; dữ liệu không đồng bộ giữa thiết bị.
-- Thiết kế tương thích màn hình nhỏ; phông chữ và hình minh họa được phục vụ cùng ứng dụng.
+| Route | Nội dung | Cách dựng |
+| --- | --- | --- |
+| `/` | Landing: hoá đơn trà sữa chia thành `c`, `v`, `m`; sáu chương; máy tính kéo tay; FAQ | CSS tự viết, Lora + Be Vietnam Pro + IBM Plex Mono |
+| `/studio` | Phòng học: bảng điều khiển, sáu chương, flashcard, 14 câu trắc nghiệm, máy tính giá trị thặng dư | [Cloudscape Design System](https://cloudscape.design) (AWS), đổi theme bằng design token |
 
-Tài khoản email/Google và đồng bộ Firebase **chưa được triển khai** theo lựa chọn đưa tính năng này sang giai đoạn sau. Không sử dụng cấu hình hoặc dữ liệu Firebase của dự án tham khảo.
+## Đã học từ đâu
 
-## Công nghệ
+- [MengToFrontend](https://github.com/Kappaemme-git/MengToFrontend) — checklist chống "AI slop" cho landing page:
+  typography và letter-spacing, tham chiếu ảnh thật, tinh chỉnh ảnh, độ đặc thù của thiết kế, chi tiết do
+  người làm, chất lượng mobile.
+- [Cloudscape Design System](https://cloudscape.design) — bộ component React của AWS, dùng cho phần ứng dụng
+  (bảng, trạng thái, form, slider), không dùng cho phần marketing.
 
-- Next.js 16 (App Router), React 19 và JavaScript (JSX).
-- CSS thuần, Lucide React và font được cài qua npm.
-- Vitest và Testing Library cho kiểm thử tương tác.
-- Không cần backend hay biến môi trường cho các tính năng hiện tại.
+## Tính năng
 
-## Chạy dự án
+- Sáu chương theo giáo trình: tóm tắt, 27 khái niệm kèm ví dụ Việt Nam, 12 flashcard, 14 câu hỏi có giải thích.
+- Máy tính giá trị thặng dư: kéo giá bán, nguyên liệu, khấu hao, tiền công → `c`, `v`, `m`, `m′` và cảnh báo khi lỗ.
+- Đánh dấu chương đã học, lưu điểm luyện cao nhất trong `localStorage` (khóa `sap122:progress:v1`).
+- Không đăng nhập, không backend, không biến môi trường. Đổi máy hoặc xóa dữ liệu trình duyệt thì mất tiến độ.
 
-Sử dụng Node.js 22.12 trở lên (hoặc Node.js 24 trở lên) để chạy cả bộ kiểm thử.
+## Nội dung và giới hạn
+
+Nội dung là bản tóm tắt – diễn giải phục vụ tự học, **không thay thế** giáo trình, bài giảng hay hướng dẫn ôn
+thi của giảng viên. Số liệu trong hoá đơn và máy tính là ví dụ minh hoạ, không phải khảo sát. Ảnh sạp hàng là
+ảnh tư liệu, cần kiểm tra lại giấy phép trước khi dùng công khai.
+
+## Cấu trúc
+
+```
+app/
+  layout.jsx            font, metadata
+  page.jsx              landing
+  globals.css           thiết kế giấy–mực–đồng cho landing
+  studio/page.jsx       phòng học (import Cloudscape + global styles)
+  studio/studio.css     lớp phủ nhỏ: thanh c, v, m
+src/
+  content/course.js     nguồn nội dung duy nhất: chương, khái niệm, flashcard, quiz, FAQ
+  lib/metrics.js        computeSurplus, chapterStatus + test
+  components/site/      LandingPage
+  components/studio/    StudioApp, theme.js (applyTheme token)
+```
+
+## Chạy
+
+Cần Node.js 22.12 trở lên (hoặc 24 trở lên) để chạy cả bộ test.
 
 ```bash
 npm install
-npm run dev
+npm run dev     # http://localhost:3000
+npm test        # vitest: công thức, dữ liệu, render landing
+npm run build && npm start
 ```
 
-Mở địa chỉ được Next.js in ra. Để kiểm tra và chạy bản production:
+## Deploy
 
-```bash
-npm test
-npm run build
-npm start
-```
-
-## Deploy trên Vercel
-
-Import repository vào Vercel và chọn nhánh muốn triển khai. Chọn **Next.js** cho Framework Preset; để mặc định Build Command, Output Directory và Install Command theo cấu hình Next.js của Vercel. Root Directory là `./`. Không cần biến môi trường cho phiên bản hiện tại.
+Import repo vào Vercel, Framework Preset **Next.js**, Root Directory `./`, không cần biến môi trường.

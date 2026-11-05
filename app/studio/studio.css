@@ -1,0 +1,81 @@
+/* Lớp phủ nhỏ lên Cloudscape cho phần máy tính giá trị thặng dư */
+
+body {
+  background: #f7f4ec;
+}
+
+.calc-bar {
+  display: flex;
+  height: 14px;
+  border-radius: 100px;
+  overflow: hidden;
+  background: #efeae0;
+  margin: 4px 0 8px;
+}
+
+.calc-seg {
+  transition: width 0.25s ease;
+}
+
+.calc-seg.calc-c {
+  background: #c8bfa9;
+}
+
+.calc-seg.calc-v {
+  background: #2a6350;
+}
+
+.calc-seg.calc-m {
+  background: #b98a2e;
+}
+
+.calc-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 16px;
+  border: 1px solid #e2dbcb;
+  border-radius: 10px;
+  background: #fffdf7;
+  min-height: 78px;
+  justify-content: center;
+}
+
+.calc-label {
+  font-size: 10.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #6d786f;
+  font-weight: 600;
+}
+
+.calc-value {
+  font-family: 'Lora', serif;
+  font-size: 23px;
+  line-height: 1.15;
+  color: #12352a;
+}
+
+.calc-cell.is-accent {
+  background: #f7f0dd;
+  border-color: #e3d2a8;
+}
+
+.calc-cell.is-accent .calc-value {
+  color: #8a6114;
+}
+
+.calc-cell.is-negative {
+  background: #fbeee9;
+  border-color: #e6c9bd;
+}
+
+.calc-cell.is-negative .calc-value {
+  color: #a4432c;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calc-seg {
+    transition: none;
+  }
+}
