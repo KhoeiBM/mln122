@@ -5,9 +5,12 @@ import { course } from '../../content/course';
 import {
   computeSurplus,
   chapterStatus,
-  readCount,
+  chapterProgress,
+  completedCount,
+  migrateProgress,
   STORAGE_KEY,
   EMPTY_PROGRESS,
+  CHAPTER_STEPS,
 } from '../../lib/metrics';
 
 const chapters = course.chapters;
@@ -32,11 +35,11 @@ const cards = chapters.flatMap((chapter) =>
 
 const vnd = (n) => new Intl.NumberFormat('vi-VN').format(Math.round(n));
 
-const NAV = [
-  { id: 'tong-quan', label: 'Bảng điều khiển' },
+const DOCK = [
+  { id: 'tong-quan', label: 'Bảng' },
   { id: 'luyen-tap', label: 'Trắc nghiệm' },
-  { id: 'so-tay', label: 'Sổ tay ghi nhớ' },
-  { id: 'bang-tinh', label: 'Bảng tính c, v, m' },
+  { id: 'so-tay', label: 'Sổ tay' },
+  { id: 'bang-tinh', label: 'Bảng tính' },
 ];
 
 function Rail({ section, onGo, progress }) {
@@ -59,7 +62,7 @@ function Rail({ section, onGo, progress }) {
         <p className="rail-label">Sáu chương</p>
         <ul className="rail-nav">
           {chapters.map((chapter) => {
-            const done = Boolean(progress.read?.[chapter.id]);
+            const state = chapterProgress(progress, chapter);
             return (
               <li key={chapter.id}>
                 <button
@@ -70,8 +73,8 @@ function Rail({ section, onGo, progress }) {
                 >
                   <span className="rail-no">{chapter.number}</span>
                   <span>{chapter.title}</span>
-                  {done && (
-                    <span className="rail-done" aria-label="đã đánh dấu học xong">
+                  {state.done && (
+                    <span className="rail-done" aria-label="đã hoàn thành chương">
                       ✓
                     </span>
                   )}
@@ -83,7 +86,7 @@ function Rail({ section, onGo, progress }) {
 
         <p className="rail-label">Luyện và tra cứu</p>
         <ul className="rail-nav">
-          {NAV.slice(1).map((item) => (
+          {DOCK.slice(1).map((item) => (
             <li key={item.id}>
               <button
                 type="button"
@@ -91,13 +94,31 @@ function Rail({ section, onGo, progress }) {
                 aria-current={section === item.id ? 'page' : undefined}
                 onClick={() => onGo(item.id)}
               >
-                {item.label}
+                {item.id === 'luyen-tap' ? 'Trắc nghiệm' : item.id === 'so-tay' ? 'Sổ tay ghi nhớ' : 'Bảng tính c, v, m'}
               </button>
             </li>
           ))}
         </ul>
       </nav>
     </aside>
+  );
+}
+
+function Dock({ section, onGo }) {
+  return (
+    <nav className="dock" aria-label="Điều hướng nhanh">
+      {DOCK.map((item) => (
+        <button
+          key={item.id}
+          type="button"
+          className={section === item.id ? 'is-active' : ''}
+          aria-current={section === item.id ? 'page' : undefined}
+          onClick={() => onGo(item.id)}
+        >
+          {item.label}
+        </button>
+      ))}
+    </nav>
   );
 }
 
@@ -120,9 +141,9 @@ function Meter({ value, label }) {
 }
 
 function Overview({ progress, onGo }) {
-  const done = readCount(progress, chapters);
+  const done = completedCount(progress, chapters);
   const percent = (done / chapters.length) * 100;
-  const next = chapters.find((chapter) => !progress.read?.[chapter.id]) ?? chapters[0];
+  const next = chapters.find((chapter) => !chapterProgress(progress, chapter).done) ?? chapters[0];
 
   return (
     <>
@@ -132,12 +153,12 @@ function Overview({ progress, onGo }) {
           <div className="panel-body">
             <p className="big-number">
               <span className="num">{done}</span>
-              <span className="big-number-of">/ {chapters.length} chương đã đánh dấu</span>
+              <span className="big-number-of">/ {chapters.length} chương hoàn thành</span>
             </p>
             <Meter value={percent} label="Tỉ lệ chương đã hoàn thành" />
             <dl className="facts">
               <div>
-                <dt>Điểm luyện cao nhất</dt>
+                <dt>Điểm luyện tổng</dt>
                 <dd>{progress.quizBest == null ? 'chưa làm' : `${progress.quizBest}/${questions.length}`}</dd>
               </div>
               <div>
@@ -161,7 +182,7 @@ function Overview({ progress, onGo }) {
             <p className="panel-text">{next.hook}</p>
             <div className="panel-actions">
               <button type="button" className="btn btn-primary btn-sm" onClick={() => onGo(next.id)}>
-                Mở chương {next.number}
+                Vào chương {next.number}
               </button>
               <button type="button" className="btn btn-quiet btn-sm" onClick={() => onGo('luyen-tap')}>
                 Làm trắc nghiệm
@@ -173,6 +194,10 @@ function Overview({ progress, onGo }) {
 
       <section className="stage-section">
         <h2 className="stage-sub">Bản đồ sáu chương</h2>
+        <p className="stage-note">
+          Mỗi chương đi theo ba bước: hiểu ý chính, xem ví dụ, tự kiểm tra. Chương chỉ được tính là
+          hoàn thành khi bạn đã xem kết quả phần tự kiểm tra.
+        </p>
         <ul className="rows">
           {chapters.map((chapter) => {
             const status = chapterStatus(progress, chapter);
@@ -183,7 +208,12 @@ function Overview({ progress, onGo }) {
                   <span className="row-title">{chapter.title}</span>
                   <span className="row-sub">{chapter.fullTitle}</span>
                 </span>
-                <span className={status.type === 'success' ? 'row-status is-done' : 'row-status'}>
+                <span
+                  className={
+                    'row-status' +
+                    (status.type === 'success' ? ' is-done' : status.type === 'progress' ? ' is-progress' : '')
+                  }
+                >
                   {status.label}
                 </span>
                 <span className="row-meta">{chapter.level}</span>
@@ -228,71 +258,272 @@ function Flashcards({ items, revealed, onReveal }) {
   );
 }
 
-function ChapterView({ chapter, progress, onToggleRead, revealed, onReveal }) {
-  const done = Boolean(progress.read?.[chapter.id]);
-  const chapterCards = chapter.flashcards.map((card, index) => ({
-    ...card,
-    key: `${chapter.id}-${index}`,
-    chapterNo: chapter.number,
-  }));
+function ChapterQuiz({ chapter, previous, onResult }) {
+  const [answers, setAnswers] = useState({});
+  const [checked, setChecked] = useState(false);
+
+  const score = chapter.quiz.reduce(
+    (total, question, index) => total + (answers[index] === question.answer ? 1 : 0),
+    0,
+  );
+  const allAnswered = chapter.quiz.every((_, index) => answers[index] !== undefined);
+
+  if (checked) {
+    return (
+      <div className="quiz-result">
+        <p className="big-number">
+          <span className="num">{score}</span>
+          <span className="big-number-of">/ {chapter.quiz.length} câu đúng</span>
+        </p>
+        <p className="panel-text">
+          {score === chapter.quiz.length
+            ? 'Đúng hết. Bạn có thể chuyển sang chương tiếp theo.'
+            : 'Đọc lại phần giải thích ở từng câu bên dưới, rồi làm lại nếu cần.'}
+        </p>
+        <div className="panel-actions">
+          <button
+            type="button"
+            className="btn btn-quiet btn-sm"
+            onClick={() => {
+              setAnswers({});
+              setChecked(false);
+            }}
+          >
+            Làm lại phần này
+          </button>
+        </div>
+
+        <ol className="quiz-review">
+          {chapter.quiz.map((question, index) => {
+            const right = answers[index] === question.answer;
+            return (
+              <li key={question.q}>
+                <p className="quiz-review-q">
+                  <span className={right ? 'mark is-right' : 'mark is-wrong'}>{right ? 'Đúng' : 'Sai'}</span>
+                  {question.q}
+                </p>
+                <p className="quiz-review-a">
+                  Đáp án đúng: <b>{question.options[question.answer]}</b>
+                </p>
+                <p className="quiz-review-e">{question.explain}</p>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    );
+  }
+
+  return (
+    <form
+      className="chapter-quiz"
+      onSubmit={(event) => {
+        event.preventDefault();
+        if (!allAnswered) return;
+        setChecked(true);
+        onResult(score);
+      }}
+    >
+      {chapter.quiz.map((question, index) => (
+        <fieldset className="quiz-fieldset" key={question.q}>
+          <legend className="quiz-legend">
+            <span className="quiz-index num">{index + 1}</span>
+            {question.q}
+          </legend>
+          {question.options.map((option, position) => (
+            <label
+              key={option}
+              className={'option' + (answers[index] === position ? ' is-chosen' : '')}
+            >
+              <input
+                type="radio"
+                name={`${chapter.id}-${index}`}
+                value={position}
+                checked={answers[index] === position}
+                onChange={() => setAnswers((current) => ({ ...current, [index]: position }))}
+              />
+              <span className="option-key num">{String.fromCharCode(65 + position)}</span>
+              <span>{option}</span>
+            </label>
+          ))}
+        </fieldset>
+      ))}
+
+      <div className="quiz-actions">
+        <button type="submit" className="btn btn-primary btn-sm" disabled={!allAnswered}>
+          Xem kết quả
+        </button>
+        <span className="fineprint" style={{ margin: 0 }}>
+          {previous === null
+            ? 'Lần đầu làm phần này.'
+            : `Lần trước: ${previous}/${chapter.quiz.length} câu đúng.`}
+        </span>
+      </div>
+    </form>
+  );
+}
+
+function ChapterSteps({ chapter, progress, onStage, revealed, onReveal, onGo }) {
+  const state = chapterProgress(progress, chapter);
+  const startStep = state.count === 3 ? 2 : state.count;
+  const [step, setStep] = useState(startStep);
+
+  const nextChapter = chapters[chapters.findIndex((item) => item.id === chapter.id) + 1];
+
+  const goStep = (next) => setStep(next);
 
   return (
     <>
-      <div className="panel hook">
-        <div className="panel-head">Câu hỏi dẫn vào chương</div>
-        <p className="hook-text">{chapter.hook}</p>
-      </div>
+      <ol className="steps" aria-label="Ba bước của chương">
+        {CHAPTER_STEPS.map((item, index) => {
+          const done = index === 0 ? state.hieu : index === 1 ? state.viDu : state.kiemTra !== null;
+          return (
+            <li key={item.id}>
+              <button
+                type="button"
+                className={'step' + (step === index ? ' is-current' : '') + (done ? ' is-done' : '')}
+                aria-current={step === index ? 'step' : undefined}
+                onClick={() => goStep(index)}
+              >
+                <span className="step-no num">{index + 1}</span>
+                <span className="step-label">{item.label}</span>
+                <span className="step-state">{done ? 'đã xong' : 'chưa'}</span>
+              </button>
+            </li>
+          );
+        })}
+      </ol>
 
-      <section className="stage-section">
-        <h2 className="stage-sub">Ý chính cần nắm</h2>
-        <p id="tom-tat">{chapter.summary}</p>
-      </section>
+      {step === 0 && (
+        <>
+          <div className="panel hook">
+            <div className="panel-head">Câu hỏi dẫn vào chương</div>
+            <p className="hook-text">{chapter.hook}</p>
+          </div>
 
-      <section className="stage-section">
-        <h2 className="stage-sub">Bảng khái niệm</h2>
-        <dl className="concepts">
-          {chapter.concepts.map((concept) => (
-            <div className="concept" key={concept.term}>
-              <dt>{concept.term}</dt>
-              <dd>
-                {concept.definition}
-                <span className="concept-example">
-                  <b>Ví dụ.</b> {concept.example}
-                </span>
-              </dd>
+          <section className="stage-section">
+            <h2 className="stage-sub">Ý chính cần nắm</h2>
+            <p className="stage-note">{chapter.summary}</p>
+          </section>
+
+          <section className="stage-section">
+            <h2 className="stage-sub">Bảng khái niệm</h2>
+            <dl className="concepts">
+              {chapter.concepts.map((concept) => (
+                <div className="concept" key={concept.term}>
+                  <dt>{concept.term}</dt>
+                  <dd>{concept.definition}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+
+          <section className="stage-section">
+            <div className="takeaway">
+              <p>
+                <b>Một câu để nhớ.</b> {chapter.takeaway}
+              </p>
             </div>
-          ))}
-        </dl>
-      </section>
-
-      <section className="stage-section">
-        <h2 className="stage-sub">Thẻ ghi nhớ của chương</h2>
-        <Flashcards items={chapterCards} revealed={revealed} onReveal={onReveal} />
-      </section>
-
-      <section className="stage-section">
-        <div className="takeaway">
-          <p>
-            <b>Một câu để nhớ.</b> {chapter.takeaway}
-          </p>
-        </div>
-        <div className="panel">
-          <div className="panel-body panel-inline">
-            <p>
-              {done
-                ? 'Bạn đã đánh dấu chương này là đã học.'
-                : 'Khi đọc xong phần khái niệm và thẻ ghi nhớ, đánh dấu để bảng điều khiển ghi nhận.'}
-            </p>
             <button
               type="button"
-              className={done ? 'btn btn-quiet btn-sm' : 'btn btn-primary btn-sm'}
-              onClick={() => onToggleRead(chapter.id)}
+              className="btn btn-primary btn-sm"
+              onClick={() => {
+                onStage(chapter.id, 'hieu');
+                goStep(1);
+              }}
             >
-              {done ? 'Bỏ đánh dấu' : 'Đánh dấu đã học'}
+              Đã hiểu, xem ví dụ
+            </button>
+          </section>
+        </>
+      )}
+
+      {step === 1 && (
+        <>
+          <section className="stage-section">
+            <h2 className="stage-sub">Ví dụ đời thường</h2>
+            <p className="stage-note">
+              Cùng một phạm trù, nhìn qua bốn câu chuyện. Đọc xong, thử tự lấy một ví dụ của riêng bạn
+              trước khi sang phần tự kiểm tra.
+            </p>
+            <ul className="examples">
+              {chapter.concepts.map((concept) => (
+                <li key={concept.term}>
+                  <span className="example-term">{concept.term}</span>
+                  <p>{concept.example}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section className="stage-section">
+            <h2 className="stage-sub">Thẻ ghi nhớ của chương</h2>
+            <Flashcards
+              items={chapter.flashcards.map((card, index) => ({
+                ...card,
+                key: `${chapter.id}-${index}`,
+                chapterNo: chapter.number,
+              }))}
+              revealed={revealed}
+              onReveal={onReveal}
+            />
+          </section>
+
+          <div className="step-actions">
+            <button type="button" className="btn btn-quiet btn-sm" onClick={() => goStep(0)}>
+              Quay lại ý chính
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              onClick={() => {
+                onStage(chapter.id, 'vi-du');
+                goStep(2);
+              }}
+            >
+              Sang phần tự kiểm tra
+            </button>
+          </div>
+        </>
+      )}
+
+      {step === 2 && (
+        <section className="stage-section">
+          <h2 className="stage-sub">Tự kiểm tra chương {chapter.number}</h2>
+          <p className="stage-note">
+            {chapter.quiz.length} câu. Chọn đáp án cho tất cả, rồi xem kết quả. Điểm ở đây được ghi
+            nhận cho chương này và không ảnh hưởng điểm luyện tổng.
+          </p>
+          <ChapterQuiz
+            chapter={chapter}
+            previous={state.kiemTra}
+            onResult={(score) => onStage(chapter.id, 'tu-kiem-tra', score)}
+          />
+        </section>
+      )}
+
+      {state.done && (
+        <div className="done-bar">
+          <p>
+            <b>Chương {chapter.number} đã hoàn thành.</b> Bạn đã qua đủ ba bước và xem kết quả tự kiểm
+            tra.
+          </p>
+          <div className="panel-actions">
+            {nextChapter ? (
+              <button type="button" className="btn btn-primary btn-sm" onClick={() => onGo(nextChapter.id)}>
+                Sang chương {nextChapter.number}
+              </button>
+            ) : (
+              <button type="button" className="btn btn-primary btn-sm" onClick={() => onGo('luyen-tap')}>
+                Làm bài luyện tổng
+              </button>
+            )}
+            <button type="button" className="btn btn-quiet btn-sm" onClick={() => onGo('tong-quan')}>
+              Về bảng điều khiển
             </button>
           </div>
         </div>
-      </section>
+      )}
     </>
   );
 }
@@ -373,8 +604,12 @@ function Practice({ progress, onFinish }) {
   return (
     <div className="panel">
       <div className="panel-head">
-        <span>Câu {index + 1} trên {questions.length}</span>
-        <span>Chương {question.chapterNo}. {question.chapterTitle}</span>
+        <span>
+          Câu {index + 1} trên {questions.length}
+        </span>
+        <span>
+          Chương {question.chapterNo}. {question.chapterTitle}
+        </span>
       </div>
       <div className="panel-body">
         <Meter value={(answeredCount / questions.length) * 100} label="Số câu đã trả lời" />
@@ -603,8 +838,8 @@ function Calculator() {
   );
 }
 
-export default function StudioApp() {
-  const [section, setSection] = useState('tong-quan');
+export default function StudioApp({ initialSection = 'tong-quan' }) {
+  const [section, setSection] = useState(initialSection);
   const [progress, setProgress] = useState(EMPTY_PROGRESS);
   const [hydrated, setHydrated] = useState(false);
   const [revealed, setRevealed] = useState({});
@@ -612,17 +847,11 @@ export default function StudioApp() {
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        setProgress({ ...EMPTY_PROGRESS, ...parsed, read: { ...(parsed.read ?? {}) } });
-      }
+      if (raw) setProgress(migrateProgress(JSON.parse(raw)));
     } catch {
       /* dữ liệu hỏng thì bắt đầu lại */
     }
 
-    const params = new URLSearchParams(window.location.search);
-    const target = params.get('chuong');
-    if (chapters.some((chapter) => chapter.id === target)) setSection(target);
     if (window.location.hash === '#bang-tinh') setSection('bang-tinh');
 
     setHydrated(true);
@@ -642,11 +871,19 @@ export default function StudioApp() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const toggleRead = (chapterId) =>
-    setProgress((current) => ({
-      ...current,
-      read: { ...current.read, [chapterId]: !current.read?.[chapterId] },
-    }));
+  const markStage = (chapterId, stage, score) =>
+    setProgress((current) => {
+      const chapterStages = { ...(current.stages?.[chapterId] ?? {}) };
+
+      if (stage === 'tu-kiem-tra') {
+        chapterStages['tu-kiem-tra'] =
+          score === undefined ? chapterStages['tu-kiem-tra'] : score;
+      } else {
+        chapterStages[stage] = true;
+      }
+
+      return { ...current, stages: { ...current.stages, [chapterId]: chapterStages } };
+    });
 
   const finishQuiz = (score) =>
     setProgress((current) => ({
@@ -655,15 +892,21 @@ export default function StudioApp() {
       quizAttempts: (current.quizAttempts ?? 0) + 1,
     }));
 
-  const resetProgress = () => setProgress({ ...EMPTY_PROGRESS, read: {} });
+  const resetProgress = () => setProgress({ ...EMPTY_PROGRESS, stages: {} });
 
   const chapter = chapters.find((item) => item.id === section);
 
   const head = chapter
     ? { title: `Chương ${chapter.number}. ${chapter.title}`, sub: chapter.fullTitle }
     : {
-        'tong-quan': { title: 'Bảng điều khiển', sub: `${course.code}, ${course.name}. ${course.credits} tín chỉ.` },
-        'luyen-tap': { title: 'Trắc nghiệm', sub: `${questions.length} câu hỏi có giải thích, rút từ sáu chương.` },
+        'tong-quan': {
+          title: 'Bảng điều khiển',
+          sub: `${course.code}, ${course.name}. ${course.credits} tín chỉ.`,
+        },
+        'luyen-tap': {
+          title: 'Trắc nghiệm',
+          sub: `${questions.length} câu hỏi có giải thích, rút từ sáu chương.`,
+        },
         'so-tay': { title: 'Sổ tay ghi nhớ', sub: `${cards.length} thẻ để tự kiểm tra trước khi thi.` },
         'bang-tinh': {
           title: 'Bảng tính c, v, m',
@@ -680,6 +923,9 @@ export default function StudioApp() {
             <small>Phòng học</small>
           </a>
           <div className="studio-top-actions">
+            <a className="btn btn-quiet btn-sm" href="/de-cuong">
+              Bản in một trang
+            </a>
             <a className="btn btn-quiet btn-sm" href="/">
               Trang chủ
             </a>
@@ -697,17 +943,32 @@ export default function StudioApp() {
           <div className="stage-head">
             <h1>{head.title}</h1>
             <p className="stage-sub-line">{head.sub}</p>
+            <label className="chapter-select">
+              <span>Chuyển chương</span>
+              <select value={chapter ? chapter.id : ''} onChange={(event) => go(event.target.value)}>
+                <option value="" disabled>
+                  Chọn chương
+                </option>
+                {chapters.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.number}. {item.title}
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
 
           {section === 'tong-quan' && <Overview progress={progress} onGo={go} />}
 
           {chapter && (
-            <ChapterView
+            <ChapterSteps
+              key={chapter.id}
               chapter={chapter}
               progress={progress}
-              onToggleRead={toggleRead}
+              onStage={markStage}
               revealed={revealed}
               onReveal={(key) => setRevealed((current) => ({ ...current, [key]: !current[key] }))}
+              onGo={go}
             />
           )}
 
@@ -728,6 +989,8 @@ export default function StudioApp() {
           </p>
         </main>
       </div>
+
+      <Dock section={section} onGo={go} />
     </>
   );
 }

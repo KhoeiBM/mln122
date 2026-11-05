@@ -223,9 +223,10 @@ câu hỏi có giải thích ngay.
 
 ```
 /                     Trang chủ (bảng giá, sáu chương, cách học, bảng tính, hỏi nhanh)
+/de-cuong             Bản in một trang A4: công thức, ý chính, khái niệm của sáu chương
 /studio               Phòng học
   ├─ Bảng điều khiển  tiến độ, việc tiếp theo, bản đồ sáu chương
-  ├─ Chương 01…06     tóm tắt, bảng khái niệm, thẻ ghi nhớ, đánh dấu đã học
+  ├─ Chương 01…06     lộ trình ba bước: hiểu ý chính → xem ví dụ → tự kiểm tra
   ├─ Trắc nghiệm      14 câu, giải thích ngay, lưu điểm cao nhất
   ├─ Sổ tay           12 thẻ, lọc theo chương
   └─ Bảng tính        bốn thanh trượt → c, v, m, m′
@@ -242,11 +243,13 @@ câu hỏi có giải thích ngay.
 - **Nội dung tách khỏi UI**: `src/content/course.js` là nguồn duy nhất (6 chương, 27 khái niệm, 12 thẻ,
   14 câu hỏi, 4 FAQ). Thêm chương chỉ cần sửa một file.
 - **Tính toán tách khỏi UI**: `src/lib/metrics.js` (`computeSurplus`, `chapterStatus`, `readCount`).
-- **Tiến độ**: `localStorage` khóa `sap122:progress:v1`, không backend, không tài khoản. Nói rõ giới hạn
-  này trong giao diện thay vì hứa đồng bộ.
+- **Tiến độ**: `localStorage` khóa `sap122:progress:v1`, không backend, không tài khoản. Mô hình dữ
+  liệu tách ba bước của từng chương (`hieu`, `vi-du`, `tu-kiem-tra`) và điểm luyện tổng; **chỉ tính
+  hoàn thành khi đã qua đủ ba bước và đã xem kết quả tự kiểm tra** — mở trang không tính là học xong.
+  Dữ liệu cũ chỉ có `read` được chuyển tự động sang bước một.
 - **Tiếp cận**: radio thật, `fieldset`/`legend`, `aria-live` cho phản hồi, `role="progressbar"` cho
   thanh tiến độ, `aria-current` cho mục đang mở, focus ring đỏ 2px, tôn trọng `prefers-reduced-motion`.
-- **Test**: Vitest + Testing Library, 8 test (công thức, dữ liệu, render trang chủ).
+- **Test**: Vitest + Testing Library, 11 test (công thức, tiến độ ba bước, migrate dữ liệu cũ, dữ liệu môn học, render trang chủ).
 - **Deploy**: Vercel, không biến môi trường.
 
 ---
@@ -308,6 +311,48 @@ Checklist:
 ```bash
 npm install
 npm run dev     # http://localhost:3000 và /studio
-npm test        # 8 test
+npm test        # 11 test
 npm run build
 ```
+
+---
+
+## 10. Tham khảo `tuananh220/mln131` — đã lấy gì, đã bỏ gì
+
+Repo tham khảo là một **bảo tàng 3D điện ảnh** cho môn MLN131 (Chủ nghĩa xã hội khoa học): bảy phòng
+tương ứng bảy chương, mỗi phòng có hai trạm (nội dung và tư liệu), camera dolly giữa các phòng, hiện
+vật dựng bằng Three.js, kèm bốn tài liệu nguồn và kiểm thử rất chi tiết.
+
+### Đã lấy
+
+| Ý tưởng | Cách áp vào Sạp 122 |
+| --- | --- |
+| **Lộ trình ba bước**: Hiểu ý chính → Xem ví dụ → Tự kiểm tra | Mỗi chương trong `/studio` giờ có ba bước, bấm chuyển được, có đánh dấu bước nào xong |
+| **Quy tắc hoàn thành chặt**: tách `visited` khỏi `lessonStages` và `completed`; "không tính tải player là học xong"; chỉ ghi hoàn thành sau khi qua đủ ba bước và xem kết quả | Bỏ nút "đánh dấu đã học" một phát. Chương chỉ hoàn thành khi có đủ `hieu`, `vi-du` và điểm `tu-kiem-tra`; dữ liệu cũ được migrate |
+| **Dock điều hướng trên mobile** thay cho thanh bên | Dưới 900px ẩn thanh bên, hiện dock bốn mục ở đáy; thêm ô "Chuyển chương" trong đầu trang |
+| **Nút cao tối thiểu 44px** | `.btn` 44px, `.btn-sm` 38px và tự nâng lên 44px khi `pointer: coarse`; dock 54px |
+| **Văn hoá ghi nguồn**: MEDIA-CREDITS, VIDEO-SOURCES, EXHIBITS nói rõ cái gì là mô hình minh hoạ, cái gì có nguồn | Thêm `docs/MEDIA-CREDITS.md` cho ảnh, font, số liệu và giới hạn nội dung |
+| **Bản in poster A3** để mang đi học nhóm | Thêm `/de-cuong`: một trang A4 in được (công thức, ý chính, khái niệm sáu chương), có `@media print` |
+| **Nói rõ giới hạn kiểm thử** ("chưa đo FPS trên máy thật", "chưa được giảng viên thẩm định") | Giữ nguyên tinh thần đó ở mục 8 và trong README |
+
+### Đã bỏ, và vì sao
+
+- **Không gian 3D và chuyển cảnh điện ảnh.** Repo kia là một file HTML 4,7 MB dựng cảnh bằng Three.js,
+  rất ấn tượng nhưng cái giá là hiệu năng, khó dùng bằng bàn phím, không in được, và quan trọng nhất:
+  môn Kinh tế chính trị cần **con số và bảng**, không cần một căn phòng. Nguyên tắc "spend your
+  boldness in one place" — chữ ký của Sạp 122 là bảng giá, không phải camera.
+- **Mô hình 3D tự dựng cho từng chương.** Mất nhiều tuần và dễ tạo cảm giác "chính xác" không có thật;
+  thay bằng ví dụ đời thường đã có sẵn trong dữ liệu.
+- **Video nhúng theo chương.** Cần kiểm quyền nhúng và nguồn; để giai đoạn 3.
+
+### So sánh nhanh
+
+| | mln131 | Sạp 122 |
+| --- | --- | --- |
+| Ẩn dụ | Bảo tàng 3D, bảy phòng | Bảng giá và sổ sách |
+| Công nghệ | HTML một file + Three.js | Next.js, component tự viết, không thư viện UI |
+| Đơn vị học | Chương có lộ trình ba bước | Chương có lộ trình ba bước (lấy từ đây) |
+| Tiến độ | localStorage, tách visited/stages/completed | localStorage, tách ba bước + điểm luyện tổng |
+| Media | 14 ảnh có nguồn, video có nguồn | Một ảnh tư liệu cho demo, có ghi chú giấy phép |
+| Bản in | Poster A3 SVG | `/de-cuong` một trang A4 |
+| Điểm mạnh riêng | Trải nghiệm điện ảnh, hiện vật | Dữ liệu, công thức, bảng tính, tốc độ và tính in ấn |

@@ -167,10 +167,10 @@ function FieldNotes() {
               </p>
             </li>
             <li>
-              <b>Học theo chương đang lên lớp</b>
+              <b>Ba bước, không phải một cú bấm</b>
               <p>
-                Phòng học giữ trạng thái từng chương, để mở máy ra là biết mình đang ở đâu và còn
-                chương nào chưa đụng tới.
+                Mỗi chương đi theo hiểu ý chính, xem ví dụ, rồi tự kiểm tra. Chương chỉ được tính là
+                xong khi bạn đã xem kết quả phần tự kiểm tra.
               </p>
             </li>
           </ul>
@@ -289,8 +289,8 @@ function Rooms() {
         <article className="room">
           <h3>Biết mình đang ở đâu</h3>
           <p>
-            Sáu chương hiện như sáu mục công việc: đã đọc hay chưa, chương nào đang mở, điểm luyện
-            cao nhất. Bảng điều khiển này xếp theo thứ tự giáo trình nên không phải nhớ lại.
+            Mỗi chương có ba bước: hiểu ý chính, xem ví dụ, tự kiểm tra. Bảng điều khiển ghi lại bạn
+            đang ở bước nào và chương nào đã xong, theo đúng thứ tự giáo trình.
           </p>
           <span className="tag">Lưu trong trình duyệt, không cần đăng nhập</span>
         </article>
@@ -305,8 +305,8 @@ function Rooms() {
         <article className="room">
           <h3>Tự kiểm tra trước khi thi</h3>
           <p>
-            Mười bốn câu trắc nghiệm có giải thích, mười hai thẻ ghi nhớ, và phần đánh dấu từng chương
-            khi bạn đã đọc xong. Sai ở đâu thì biết ngay ở đó.
+            Mười bốn câu trắc nghiệm có giải thích, mười hai thẻ ghi nhớ, và bản in một trang A4 để
+            mang đi học nhóm. Sai ở đâu thì biết ngay ở đó.
           </p>
           <span className="tag">Có giải thích cho mọi đáp án</span>
         </article>
@@ -375,6 +375,7 @@ function Footer() {
         <nav className="footer-links" aria-label="Liên kết chân trang">
           <a href="/studio">Phòng học</a>
           <a href="/studio?chuong=chuong-3">Chương 3, giá trị thặng dư</a>
+          <a href="/de-cuong">Bản in một trang</a>
           <a href="#hoi-dap">Câu hỏi thường gặp</a>
         </nav>
         <div className="footer-meta">

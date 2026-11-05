@@ -197,6 +197,7 @@ p {
   background: var(--paper);
   color: var(--ink);
   padding: 11px 18px;
+  min-height: 44px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -233,7 +234,14 @@ p {
 
 .btn-sm {
   padding: 8px 13px;
+  min-height: 38px;
   font-size: 13px;
+}
+
+@media (pointer: coarse) {
+  .btn-sm {
+    min-height: 44px;
+  }
 }
 
 /* ---------- hero ---------- */
