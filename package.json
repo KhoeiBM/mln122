@@ -1,5 +1,5 @@
 {
-  "name": "sap-122",
+  "name": "chon-duong",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -12,7 +12,6 @@
   "dependencies": {
     "@fontsource/barlow-condensed": "^5.3.0",
     "@fontsource/be-vietnam-pro": "^5.3.0",
-    "lucide-react": "^0.468.0",
     "next": "^16.4.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -23,5 +22,5 @@
     "jsdom": "^26.1.0",
     "vitest": "^5.1.0"
   },
-  "description": "Sạp 122 — trang chủ và phòng học tương tác cho môn MLN122 (Kinh tế chính trị Mác – Lênin), Next.js và component tự viết."
+  "description": "Chọn đường — hai mốc lịch sử kinh tế Việt Nam và hai kịch bản quyết định cho môn MLN122 (Kinh tế chính trị Mác – Lênin), Đại học FPT. Next.js, không dùng UI kit."
 }
