@@ -12,21 +12,30 @@ Web học tập tương tác về Chương 5: kinh tế thị trường định 
 
 Tài khoản email/Google và đồng bộ Firebase **chưa được triển khai** theo lựa chọn đưa tính năng này sang giai đoạn sau. Không sử dụng cấu hình hoặc dữ liệu Firebase của dự án tham khảo.
 
+## Công nghệ
+
+- Next.js 16 (App Router), React 19 và JavaScript (JSX).
+- CSS thuần, Lucide React và font được cài qua npm.
+- Vitest và Testing Library cho kiểm thử tương tác.
+- Không cần backend hay biến môi trường cho các tính năng hiện tại.
+
 ## Chạy dự án
 
-Yêu cầu Node.js 22.12 trở lên (hoặc Node.js 24 trở lên) để chạy cả bộ kiểm thử.
+Sử dụng Node.js 22.12 trở lên (hoặc Node.js 24 trở lên) để chạy cả bộ kiểm thử.
 
 ```bash
 npm install
 npm run dev
 ```
 
-Mở địa chỉ được Vite in ra. Để kiểm tra bản production:
+Mở địa chỉ được Next.js in ra. Để kiểm tra và chạy bản production:
 
 ```bash
 npm test
 npm run build
-npm run preview
+npm start
 ```
 
-Ứng dụng sử dụng React và Vite, không cần backend hay biến môi trường cho các tính năng hiện tại. Thư mục `dist/` là đầu ra tĩnh của bản build.
+## Deploy trên Vercel
+
+Import repository vào Vercel và chọn nhánh muốn triển khai. Chọn **Next.js** cho Framework Preset; để mặc định Build Command, Output Directory và Install Command theo cấu hình Next.js của Vercel. Root Directory là `./`. Không cần biến môi trường cho phiên bản hiện tại.

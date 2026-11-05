@@ -1,13 +1,8 @@
-import '@fontsource/be-vietnam-pro/400.css';
-import '@fontsource/be-vietnam-pro/500.css';
-import '@fontsource/be-vietnam-pro/600.css';
-import '@fontsource/be-vietnam-pro/700.css';
-import '@fontsource/dm-serif-display/400.css';
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { createRoot } from 'react-dom/client';
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, Bookmark, Check, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, CircleHelp, Clock3, Compass, GraduationCap, Landmark, Layers3, Lightbulb, Menu, MousePointer2, Network, Play, RotateCcw, Scale, Sparkles, Target, Users, X, Zap } from 'lucide-react';
 import { chapters, characteristics, institutions, relationships, cards, quiz } from './data';
-import './style.css';
 
 const KEY = 'thi-truong-loi-ich-progress-v1';
 function loadProgress() { try { const v = JSON.parse(localStorage.getItem(KEY)); return v && typeof v === 'object' ? v : {}; } catch { return {}; } }
@@ -15,11 +10,12 @@ const icons = [Compass, Landmark, Network, Lightbulb, GraduationCap];
 function SectionHead({number, eyebrow, title, description}) {return <div className="section-heading"><div className="section-number">{number}</div><div><div className="eyebrow">{eyebrow}</div><h2>{title}</h2><p>{description}</p></div></div>}
 function DoneButton({id, done, toggle}) {return <button className={'done-button '+(done?'done':'')} onClick={()=>toggle(id)}><CheckCircle2 size={16}/>{done?'Đã hoàn thành':'Đánh dấu đã học'}</button>}
 export function App(){
- const [saved,setSaved]=useState(loadProgress); const [active,setActive]=useState('tong-quan'); const [menu,setMenu]=useState(false);
+ const [saved,setSaved]=useState({}); const [progressReady,setProgressReady]=useState(false); const [active,setActive]=useState('tong-quan'); const [menu,setMenu]=useState(false);
  const [character,setCharacter]=useState(0); const [institution,setInstitution]=useState(0); const [relation,setRelation]=useState(0); const [choice,setChoice]=useState(null);
  const [card,setCard]=useState(0); const [flipped,setFlipped]=useState(false); const [quizIndex,setQuizIndex]=useState(0); const [answers,setAnswers]=useState({}); const [finished,setFinished]=useState(false);
  const done = Array.isArray(saved.done) ? saved.done.filter(id=>chapters.some(c=>c.id===id)) : []; const progress=Math.round(done.length/chapters.length*100);
- useEffect(()=>{try{localStorage.setItem(KEY,JSON.stringify(saved))}catch{}},[saved]);
+ useEffect(()=>{setSaved(loadProgress());setProgressReady(true)},[]);
+ useEffect(()=>{if(progressReady)try{localStorage.setItem(KEY,JSON.stringify(saved))}catch{}},[saved,progressReady]);
  useEffect(()=>{const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)setActive(e.target.id)})},{rootMargin:'-20% 0px -65% 0px'});chapters.forEach(c=>{const el=document.getElementById(c.id);if(el)observer.observe(el)});return()=>observer.disconnect()},[]);
  const toggle=id=>setSaved(s=>({...s,done:done.includes(id)?done.filter(x=>x!==id):[...done,id]}));
  const navigate=id=>{setActive(id);setMenu(false);document.getElementById(id)?.scrollIntoView({behavior:'smooth'})};
@@ -38,7 +34,7 @@ export function App(){
   <div className="main-wrap" id="top">
     <header className="topbar"><button className="menu-button" aria-label="Mở menu" onClick={()=>setMenu(true)}><Menu/></button><div className="breadcrumbs"><span>KHÔNG GIAN HỌC TẬP</span><ChevronRight size={14}/><b>CHƯƠNG 05</b></div><div className="top-right"><span><Clock3 size={15}/> Khoảng 25 phút</span><button onClick={()=>navigate('on-tap')}><Bookmark size={15}/> Bắt đầu ôn tập</button></div></header>
     <main>
-      <div className="hero"><img src={`${import.meta.env.BASE_URL}hero.png`} alt="Minh họa thành phố, khu chợ và các hoạt động kinh tế kết nối với nhau"/><div className="hero-content"><div className="hero-badge"><span/> CHƯƠNG 05 <i/> KINH TẾ CHÍNH TRỊ</div><h1>Thị trường<br/><em>& lợi ích</em></h1><p>Khám phá kinh tế thị trường định hướng xã hội chủ nghĩa và câu chuyện về những lợi ích cùng phát triển.</p><div className="hero-actions"><button className="primary-button" onClick={()=>navigate('tong-quan')}>Bắt đầu khám phá <ArrowRight size={17}/></button><button className="hero-text-button" onClick={()=>navigate('on-tap')}><span><Play size={12} fill="currentColor"/></span> Ôn tập ngay</button></div></div><div className="hero-index">CHƯƠNG <b>05</b><span> / 05</span></div></div>
+      <div className="hero"><img src="/hero.png" alt="Minh họa thành phố, khu chợ và các hoạt động kinh tế kết nối với nhau"/><div className="hero-content"><div className="hero-badge"><span/> CHƯƠNG 05 <i/> KINH TẾ CHÍNH TRỊ</div><h1>Thị trường<br/><em>& lợi ích</em></h1><p>Khám phá kinh tế thị trường định hướng xã hội chủ nghĩa và câu chuyện về những lợi ích cùng phát triển.</p><div className="hero-actions"><button className="primary-button" onClick={()=>navigate('tong-quan')}>Bắt đầu khám phá <ArrowRight size={17}/></button><button className="hero-text-button" onClick={()=>navigate('on-tap')}><span><Play size={12} fill="currentColor"/></span> Ôn tập ngay</button></div></div><div className="hero-index">CHƯƠNG <b>05</b><span> / 05</span></div></div>
       <div className="intro-strip"><div><span className="mini-icon"><Compass size={19}/></span><div><b>Một bức tranh lớn</b><p>Ba góc nhìn để hiểu nền kinh tế</p></div></div><div><span className="mini-icon"><MousePointer2 size={19}/></span><div><b>Học qua tương tác</b><p>Khám phá theo cách của bạn</p></div></div><div><span className="mini-icon"><Target size={19}/></span><div><b>Hiểu & vận dụng</b><p>Liên hệ với những điều gần gũi</p></div></div></div>
       <section id="tong-quan" className="content-section first-section"><SectionHead number="01" eyebrow="BẮT ĐẦU TỪ BỨC TRANH LỚN" title="Thị trường theo cách Việt Nam" description="Một mô hình kinh tế mang những đặc điểm chung của thị trường, đồng thời phù hợp với điều kiện lịch sử và mục tiêu phát triển của Việt Nam."/>
         <div className="definition-card"><div className="definition-icon"><span><BookOpen size={23}/></span></div><div><div className="card-kicker">KHÁI NIỆM CỐT LÕI</div><h3>Kinh tế thị trường định hướng xã hội chủ nghĩa</h3><p>Là nền kinh tế vận hành theo <strong>các quy luật của thị trường</strong>, đồng thời hướng tới dân giàu, nước mạnh, dân chủ, công bằng, văn minh; có sự điều tiết của Nhà nước do Đảng Cộng sản Việt Nam lãnh đạo.</p></div><div className="quote-mark">“</div></div>
@@ -80,5 +76,4 @@ export function App(){
  </div>
 }
 
-const root = document.getElementById('root');
-if (root) createRoot(root).render(<App/>);
+

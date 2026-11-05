@@ -2,7 +2,7 @@
 import React from 'react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
-import { App } from './main';
+import { App } from './App';
 import { quiz } from './data';
 
 class Observer { observe() {} disconnect() {} }
