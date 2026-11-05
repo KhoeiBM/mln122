@@ -1,31 +1,41 @@
-import '@fontsource/barlow-condensed/400.css';
+import '@fontsource/barlow-condensed/500.css';
 import '@fontsource/barlow-condensed/600.css';
-import '@fontsource/barlow-condensed/700.css';
 import '@fontsource/be-vietnam-pro/400.css';
 import '@fontsource/be-vietnam-pro/500.css';
 import '@fontsource/be-vietnam-pro/600.css';
-import '@fontsource/be-vietnam-pro/700.css';
 import './globals.css';
+import SiteHeader from '../src/components/site/SiteHeader';
+import SiteFooter from '../src/components/site/SiteFooter';
 
 export const metadata = {
-  title: 'Sạp 122 — học Kinh tế chính trị Mác – Lênin từ một sạp hàng',
+  title: 'Chọn đường — một quyết định, nhiều góc nhìn | MLN122',
   description:
-    'Sáu chương MLN122 dưới dạng bảng giá, bảng tính giá trị thặng dư, thẻ ghi nhớ và câu hỏi có giải thích. Dành cho sinh viên Đại học FPT.',
-  keywords: ['MLN122', 'kinh tế chính trị', 'FPT', 'giá trị thặng dư', 'học tập'],
+    'Hai mốc lịch sử kinh tế Việt Nam và hai kịch bản quyết định: chọn phương án, xem hệ quả trên ba trục, nhìn từ ba phía và viết phản biện bằng lý luận MLN122.',
+  keywords: ['MLN122', 'kinh tế chính trị', 'Đại học FPT', 'học tập', 'kịch bản quyết định'],
   openGraph: {
-    title: 'Sạp 122 — MLN122, học từ một sạp hàng',
-    description: 'Sáu chương Kinh tế chính trị Mác – Lênin, học bằng cách kéo và bấm.',
+    title: 'Chọn đường — một quyết định, nhiều góc nhìn',
+    description:
+      'Từ bao cấp 1986 đến một quyết định hôm nay: học MLN122 bằng cách tự chọn và tự lập luận.',
     locale: 'vi_VN',
     type: 'website',
   },
 };
 
-export const viewport = { themeColor: '#eff2ee' };
+export const viewport = { themeColor: '#e9ece6' };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="vi">
-      <body>{children}</body>
+      <body>
+        <a className="skip" href="#main">
+          Tới nội dung chính
+        </a>
+        <SiteHeader />
+        <main id="main" className="shell">
+          {children}
+        </main>
+        <SiteFooter />
+      </body>
     </html>
   );
 }
