@@ -46,8 +46,16 @@ phần thặng dư trong chuỗi.
 | 3 | Xem bốn mắt chuỗi giá trị, chọn chỗ cắt 5%, đọc ai chịu | đã mở phần thật |
 | 4 | Viết 2–4 câu: phần dư ra đến từ đâu | đã chọn chỗ cắt |
 | 5 | Đọc phần kiến thức của món | luôn mở |
+| 6 | Luyện: thẻ ghi nhớ, ghép cặp, trắc nghiệm | luôn mở, không bắt buộc |
 
 Hoàn thành = đủ năm điều kiện trên. Tiến độ lưu trên máy người học.
+
+## 5b. Phần luyện
+
+Ba chế độ luyện sinh thẳng từ dữ liệu đã có: 8 thẻ ghi nhớ (tự đánh giá bốn mức, lịch ôn giãn kiểu
+SM-2 rút gọn), ghép 6 cặp phạm trù × ứng dụng mỗi lượt (bốn lượt phủ 24 cặp), 12 câu trắc nghiệm có
+giải thích từng phương án. Điểm kinh nghiệm, cấp, chuỗi ngày và kỷ lục chỉ để duy trì nhịp quay lại —
+không quy đổi thành điểm môn học, không có bảng xếp hạng, không gửi dữ liệu lên máy chủ.
 
 ## 6. Đánh giá (không chấm cách chia)
 
@@ -90,6 +98,8 @@ Sản phẩm cung cấp nguyên liệu cho bốn tiêu chí này, không tự ch
 | Số liệu bị hỏi nguồn | Ghi "ước lượng minh hoạ" ngay dưới kết quả và ở trang chủ; ghi rõ trong `docs/NGUON-VA-GIOI-HAN.md` |
 | Trích dẫn sai | Ghi nguồn tại chỗ, hiện "số trang cần đối chiếu bản in", có danh sách kiểm |
 | Người học bấm qua loa | Hoàn thành cần chuỗi + cắt 5% + viết ≥ 80 ký tự |
+| Phần luyện bị hiểu là học thuộc đáp án | Câu hỏi sinh từ số liệu đang hiển thị, mỗi phương án đều có giải thích, không có ngân hàng câu hỏi cố định |
+| Một tên lớp CSS làm hỏng bố cục ở thành phần khác | Tên lớp theo hệ riêng (`stage*`, `bump`, `prac-*`), có test canh gác lớp kích thước cố định |
 | Nội dung quá tải | Khoá phạm vi ba món, bảy khoản |
 
 ## 10. Hướng phát triển
@@ -97,3 +107,4 @@ Sản phẩm cung cấp nguyên liệu cho bốn tiêu chí này, không tự ch
 - Thêm món thứ tư theo hướng dịch vụ (vé xe, gói cước) để so sánh cấu trúc giá dịch vụ với hàng hoá.
 - Chế độ nhóm: ba sinh viên chia cùng một món, so sánh ba cách chia và tranh luận chỗ lệch.
 - Bản cho giảng viên: xem phân bố cách chia của cả lớp (không thu thập dữ liệu cá nhân).
+- Mở rộng phần luyện thành đề ôn theo chương khi có ngân hàng câu hỏi đã được giảng viên duyệt.
