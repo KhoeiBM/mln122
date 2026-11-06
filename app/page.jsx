@@ -1,132 +1,125 @@
 import Link from 'next/link';
-import ItemGrid from '../src/components/receipt/ItemGrid';
-import XpStrip from '../src/components/practice/XpStrip';
-import { ITEMS } from '../src/content/items';
-import { formatVnd } from '../src/lib/split';
+import ChapterGrid from '../src/components/dash/ChapterGrid';
+import StatsStrip from '../src/components/dash/StatsStrip';
+import { CHAPTERS } from '../src/content/chapters';
+import { EXAMPLES } from '../src/content/examples';
+import { HUB } from '../src/content/hub';
+import { TOTAL_QUESTIONS } from '../src/lib/questions';
 
-const STEPS = [
+const MODES = [
   {
-    num: '01',
-    name: 'Chia giá bán',
-    body: 'Bảy khoản, cộng đủ 100%. Bạn phải quyết định bao nhiêu là vải, bao nhiêu là công, bao nhiêu là lợi nhuận.',
+    href: '/quiz',
+    label: 'Quiz theo chương',
+    detail: `${TOTAL_QUESTIONS} câu, giải thích từng phương án và mẹo loại trừ`,
+    code: '01',
   },
   {
-    num: '02',
-    name: 'Mở phần thật',
-    body: 'Đặt cách chia của bạn cạnh một khoảng tham chiếu, rồi gộp lại thành c, v, m và tự tính m′.',
+    href: '/review',
+    label: 'Ôn thẻ đến hạn',
+    detail: `${HUB.length} thẻ phạm trù, lịch ôn giãn theo mức tự đánh giá`,
+    code: '02',
   },
   {
-    num: '03',
-    name: 'Xem ai lấy gì',
-    body: 'Bốn người trong cùng một món hàng. Rồi chọn chỗ cắt 5% và đọc xem ai thật sự phải chịu.',
+    href: '/match',
+    label: 'Ghép thuật ngữ',
+    detail: 'Sáu cặp mỗi lượt: phạm trù với câu đúc kết',
+    code: '03',
+  },
+  {
+    href: '/knowledge',
+    label: 'Knowledge Hub',
+    detail: 'Tra theo chương, có trích dẫn, đúc kết và ví dụ',
+    code: '04',
   },
 ];
 
 export default function HomePage() {
   return (
     <div className="home">
-      <section className="hero">
-        <p className="hero-kicker">MLN122 · Kinh tế chính trị Mác – Lênin · Đại học FPT</p>
-        <h1 className="hero-title">
-          Một món hàng.
+      <section className="hero" aria-labelledby="hero-title">
+        <p className="eyebrow">MLN122 · Kinh tế chính trị Mác – Lênin · Đại học FPT</p>
+        <h1 className="hero-title" id="hero-title">
+          Sáu chương, một cuốn sổ,
           <br />
-          Ai lấy phần nào?
+          và {TOTAL_QUESTIONS} câu để tự kiểm tra
         </h1>
         <p className="hero-lead">
-          Ly trà sữa {formatVnd(45000)}, chiếc áo thun {formatVnd(250000)}, suất ăn {formatVnd(35000)}.
-          Bạn thấy giá bán, nhưng không thấy bên trong nó có bao nhiêu là nguyên liệu, bao nhiêu là
-          công, bao nhiêu là phần dôi ra. Trang này để bạn tự chia trước, rồi mới đối chiếu.
+          Mỗi câu trả lời đều có giải thích cho cả bốn phương án — kể cả phương án sai. Không có bảng
+          xếp hạng, không thu thập dữ liệu: điểm và chuỗi ngày chỉ nằm trong trình duyệt của bạn.
         </p>
         <div className="hero-actions">
-          <Link className="btn btn-primary" href={`/boc/${ITEMS[0].id}`}>
-            Bóc thử ly trà sữa
+          <Link className="btn btn-primary" href="/quiz">
+            Quiz nhanh 10 câu
           </Link>
-          <Link className="btn btn-ghost" href="/kien-thuc">
-            Đọc phần kiến thức
+          <Link className="btn btn-ghost" href="/learn">
+            Học theo chương
           </Link>
         </div>
-        <p className="hero-note">
-          Khoảng 4 phút mỗi món. Không cần tài khoản, cách chia được lưu trên máy bạn.
-        </p>
       </section>
 
-      <section className="stages" aria-label="Ba bước của một lần bóc">
-        {STEPS.map((step) => (
-          <article className="stage" key={step.num}>
-            <p className="stage-num">{step.num}</p>
-            <h2 className="stage-name">{step.name}</h2>
-            <p className="stage-body">{step.body}</p>
-          </article>
-        ))}
-      </section>
+      <StatsStrip />
 
-      <section className="section" aria-labelledby="ba-mon">
-        <h2 id="ba-mon" className="section-title">
-          Ba món để bóc
+      <section className="section" aria-labelledby="modes-title">
+        <h2 className="section-title" id="modes-title">
+          Bốn lối vào
         </h2>
-        <ItemGrid />
+        <ul className="modes">
+          {MODES.map((mode) => (
+            <li key={mode.href}>
+              <Link className="mode" href={mode.href}>
+                <span className="mode-code">{mode.code}</span>
+                <span className="mode-label">{mode.label}</span>
+                <span className="mode-detail">{mode.detail}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </section>
 
-      <section className="section" aria-labelledby="luyen">
-        <h2 id="luyen" className="section-title">
-          Luyện nhanh
+      <section className="section" aria-labelledby="chapters-title">
+        <h2 className="section-title" id="chapters-title">
+          Sáu chương
         </h2>
         <p className="section-lead">
-          Ba chế độ luyện lấy từ chính tám phạm trù và số liệu ba món: thẻ ghi nhớ có lịch ôn giãn,
-          ghép cặp phạm trù với dòng ứng dụng, trắc nghiệm có giải thích từng phương án. Điểm kinh
-          nghiệm và chuỗi ngày chỉ để bạn thấy mình có quay lại đều không.
+          Thứ tự chương theo giáo trình. Mỗi chương có 20 câu hỏi, phần tóm tắt và các phạm trù trọng
+          tâm nối sang Knowledge Hub.
         </p>
-        <XpStrip />
-        <div className="hero-actions">
-          <Link className="btn btn-primary" href="/luyen">
-            Mở phần luyện
-          </Link>
-          <Link className="btn btn-ghost" href="/kien-thuc">
-            Xem tám phạm trù
-          </Link>
-        </div>
+        <ChapterGrid />
       </section>
 
-      <section className="section why" aria-labelledby="vi-sao">
-        <h2 id="vi-sao" className="section-title">
-          Vì sao làm theo cách này
+      <section className="section" aria-labelledby="examples-title">
+        <h2 className="section-title" id="examples-title">
+          Ba ví dụ dùng xuyên suốt
         </h2>
-        <div className="why-grid">
-          <div>
-            <h3 className="why-title">Giá là chỗ kiến thức bị bỏ qua nhiều nhất</h3>
-            <p>
-              Ai cũng biết một ly trà sữa giá bao nhiêu, gần như không ai biết bên trong nó có bao
-              nhiêu là công lao động. Bắt đầu từ con số quen thuộc thì phạm trù mới có chỗ bám.
-            </p>
-          </div>
-          <div>
-            <h3 className="why-title">Phải tự chia, không được chọn đáp án</h3>
-            <p>
-              Không có phương án A, B, C. Bạn đặt từng phần trăm, nên kết quả là cách nghĩ của bạn —
-              và chỗ lệch với tham chiếu là chỗ cần giải thích, không phải điểm trừ.
-            </p>
-          </div>
-          <div>
-            <h3 className="why-title">Tự tính ra m′ của chính mình</h3>
-            <p>
-              m′ không phải công thức để học thuộc. Bạn vừa có m và v do mình chia, nên con số xuất
-              hiện như hệ quả của một quyết định phân phối.
-            </p>
-          </div>
-        </div>
+        <p className="section-lead">
+          Mọi phạm trù đều được kiểm tra lại trên cùng ba món quen, để lý thuyết không tách khỏi đời
+          sống.
+        </p>
+        <ul className="examples">
+          {EXAMPLES.map((example) => (
+            <li className="example" key={example.id}>
+              <p className="example-name">{example.name}</p>
+              <p className="example-price">{example.price}</p>
+              <p className="example-line">{example.line}</p>
+              <p className="example-chapter">Dùng ở Ch.{example.chapter}</p>
+            </li>
+          ))}
+        </ul>
       </section>
 
-      <section className="section honest" aria-labelledby="trung-thuc">
-        <h2 id="trung-thuc" className="section-title">
-          Con số lấy từ đâu
+      <section className="section note" aria-labelledby="note-title">
+        <h2 className="section-title" id="note-title">
+          Nguồn và giới hạn
         </h2>
         <p>
-          Cả ba món dùng <strong>khoảng tham chiếu minh hoạ</strong> dựng để dạy cách chia, không
-          phải số liệu công bố của quán hay doanh nghiệp nào. Mỗi món ghi chú ngay dưới phần kết quả.
-          Phần trích dẫn giáo trình có ghi nguồn, số trang còn chờ đối chiếu bản in.
+          Nội dung bám theo giáo trình Kinh tế chính trị Mác – Lênin (NXB Chính trị quốc gia Sự thật,
+          2021). {CHAPTERS.length} chương, {TOTAL_QUESTIONS} câu hỏi do nhóm biên soạn, chưa được
+          giảng viên thẩm định; trích dẫn chưa đối chiếu số trang bản in.
         </p>
         <p>
-          <Link href="/kien-thuc#nguon">Xem đầy đủ nguồn và giới hạn</Link>.
+          <Link className="text-link" href="/knowledge#nguon">
+            Đọc đầy đủ phần nguồn và giới hạn
+          </Link>
         </p>
       </section>
     </div>

@@ -1,10 +1,11 @@
-// Điểm kinh nghiệm, chuỗi ngày học và lịch ôn lại của thẻ ghi nhớ.
+// Điểm kinh nghiệm, chuỗi ngày học, lịch ôn thẻ và số câu đã làm.
 // Toàn bộ là hàm thuần; ngày tháng được truyền vào để kiểm thử được.
 
-export const GAME_KEY = 'boc-gia:game:v1';
+export const GAME_KEY = 'so-cai:v1';
 
 export const XP = {
   answer: 10,
+  wrongAnswer: 2,
   flashcard: 5,
   matchPair: 3,
   round: 20,
@@ -25,6 +26,7 @@ export function emptyGame() {
     xp: 0,
     streak: { count: 0, last: null },
     cards: {},
+    answered: {},
     best: { quiz: 0, match: 0 },
     rounds: 0,
   };
@@ -66,6 +68,22 @@ export function touchDay(game, today) {
 export function addXp(game, amount, today) {
   const touched = touchDay(game, today);
   return { ...touched, xp: Math.max(0, touched.xp + amount) };
+}
+
+// Ghi nhận một câu đã làm. Đúng thì cộng điểm đầy đủ, sai cộng ít; đã đúng rồi thì
+// giữ nguyên trạng thái đúng và không cộng thêm điểm cho lần đúng lại.
+export function recordAnswer(game, questionId, correct, today) {
+  const previous = game.answered[questionId];
+  const answered = {
+    ...game.answered,
+    [questionId]: previous === 'correct' || correct ? 'correct' : 'wrong',
+  };
+  const gained = correct && previous !== 'correct' ? XP.answer : correct ? 0 : XP.wrongAnswer;
+  return { ...addXp(game, gained, today), answered };
+}
+
+export function learnedCount(game) {
+  return Object.keys(game.answered || {}).length;
 }
 
 export function levelFor(xp) {
@@ -163,6 +181,11 @@ export function migrateGame(raw) {
         reps: Number.isFinite(card.reps) ? Math.max(0, Math.round(card.reps)) : 0,
         due: card.due,
       };
+    }
+  }
+  if (raw.answered && typeof raw.answered === 'object') {
+    for (const [id, state] of Object.entries(raw.answered)) {
+      if (state === 'correct' || state === 'wrong') game.answered[id] = state;
     }
   }
   if (raw.best && typeof raw.best === 'object') {

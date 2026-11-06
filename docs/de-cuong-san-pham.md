@@ -1,110 +1,96 @@
-# Đề cương sản phẩm — Bóc giá
-
-Tài liệu để nộp thuyết minh và chia việc. Sản phẩm đã chạy được: xem `README.md`.
+# Đề cương sản phẩm — Sổ cái MLN122
 
 ## 1. Tên và một câu mô tả
 
-**Bóc giá — một món hàng, ai lấy phần nào?**
-
-Người học chia giá bán của một món quen (ly trà sữa 45.000đ, áo thun 250.000đ, suất ăn 35.000đ)
-thành bảy khoản, gộp lại thành `c`, `v`, `m`, tự tính `m′` theo cách chia của mình, rồi xem ai nhận
-phần thặng dư trong chuỗi.
+**Sổ cái MLN122 — sáu chương, 120 câu, một cuốn sổ.** Web ôn thi cho môn Kinh tế chính trị Mác –
+Lênin (Đại học FPT): trắc nghiệm có giải thích từng phương án, thẻ phạm trù giãn lịch, ghép thuật
+ngữ, và một Knowledge Hub tra theo chương.
 
 ## 2. Tính cần thiết
 
-1. **Giá là dữ kiện quen nhất mà ít ai bóc được.** Sinh viên biết một ly trà sữa giá bao nhiêu,
-   gần như không biết trong đó có bao nhiêu là công lao động.
-2. **Khái niệm học thuộc nhưng không gắn được với số.** `c + v + m` và `m′` thường được học như
-   công thức phải nhớ, không phải như hệ quả của một cách chia.
-3. **Bài tập hiện có thường là tính toán cho sẵn số.** Ở đây người học phải *tự tạo ra* số liệu
-   phân phối trước, rồi mới đối chiếu — nên chỗ lệch là chỗ cần giải thích.
+Sinh viên MLN122 thường có ba vấn đề: (1) đề cương dài, không biết chỗ nào là trọng tâm; (2) làm
+trắc nghiệm chỉ biết đúng/sai mà không biết **vì sao phương án kia sai**; (3) học xong một lần rồi
+quên vì không có nhịp ôn lại. Sản phẩm xử lý cả ba: chia nội dung theo đúng sáu chương, giải thích
+cả bốn phương án, và giãn lịch ôn theo mức tự đánh giá.
 
 ## 3. Tính sáng tạo
 
-- **Không có đáp án.** Không phương án A/B/C, không điểm, không xếp hạng. Chỉ có khoảng tham chiếu
-  để đặt cạnh cách chia của người học.
-- **Một cơ chế duy nhất, dùng ba lần.** Cùng một thao tác chia tiền, ba món cho ba kết luận khác
-  nhau: quán nhỏ (m′ 150%), áo thun thương hiệu (m′ rất cao vì phần lớn `m` thuộc thương hiệu), suất
-  ăn qua ứng dụng (phần lớn giá trị nằm ở phí kênh bán).
-- **`m′` do người học tạo ra.** Con số xuất hiện sau khi họ chia, nên nó là hệ quả của một quyết định
-  phân phối, không phải một công thức trang trí.
-- **Phần kiến thức đứng cùng chỗ với ví dụ.** Mỗi phạm trù có trích dẫn, nói lại bằng lời thường,
-  đúc kết và ba dòng ứng dụng — đúng ba món đang làm.
+- **Giải thích bằng cả bốn phương án**, kèm một dòng "cách loại trừ" cho mỗi câu — biến câu sai thành
+  tài liệu học, không chỉ là điểm trừ.
+- **Câu hỏi sinh từ chính dữ liệu chương** (phạm trù, ví dụ, số liệu), không có ngân hàng câu hỏi
+  ngoài giáo trình để học thuộc máy móc.
+- **Ngôn ngữ thiết kế "sổ cái"**: giấy, đường kẻ nét đứt, số kiểu bảng — khác hẳn giao diện thẻ bo
+  tròn quen thuộc, nhưng vẫn đọc nhanh trên điện thoại.
+- **Trung thực về nguồn**: mỗi phạm trù ghi rõ "trích giáo trình" hay "diễn đạt theo giáo trình".
 
 ## 4. Đối tượng và phạm vi
 
-- Sinh viên FPT học MLN122; giảng viên cần một hoạt động mở đầu buổi học.
-- Khoá cứng phạm vi: **3 món × 7 khoản × 3 lựa chọn cắt 5%**, 8 phạm trù. Thêm món là thêm chi phí
-  dựng bảng tham chiếu, không chỉ thêm nội dung.
+- Sinh viên FPT đang học MLN122, ôn thi giữa kỳ/cuối kỳ.
+- Phạm vi: 6 chương, 120 câu, 22 phạm trù, 3 ví dụ đời thường (trà sữa 45.000đ, áo thun 250.000đ,
+  suất ăn 35.000đ).
+- Không làm: đề thi thử có tính giờ như thi thật, bảng xếp hạng, tài khoản, dữ liệu máy chủ.
 
 ## 5. Luồng sử dụng
 
 | Bước | Việc người học làm | Điều kiện |
 | --- | --- | --- |
-| 1 | Chia bảy khoản cho đủ 100% | bắt buộc để mở bước 2 |
-| 2 | Mở phần thật: lệch so với tham chiếu, gộp `c/v/m`, đọc `m′` | đã chia đủ 100% |
-| 3 | Xem bốn mắt chuỗi giá trị, chọn chỗ cắt 5%, đọc ai chịu | đã mở phần thật |
-| 4 | Viết 2–4 câu: phần dư ra đến từ đâu | đã chọn chỗ cắt |
-| 5 | Đọc phần kiến thức của món | luôn mở |
-| 6 | Luyện: thẻ ghi nhớ, ghép cặp, trắc nghiệm | luôn mở, không bắt buộc |
+| 1 | Mở `/quiz`, chọn chương (hoặc cả 6 chương), chọn 10/20/tất cả câu | luôn mở |
+| 2 | Trả lời từng câu; xem giải thích 4 phương án và mẹo loại trừ | sau khi chọn |
+| 3 | Xem kết quả lượt, đọc gợi ý theo mức đúng | hết lượt |
+| 4 | Sang `/review` ôn thẻ phạm trù, tự đánh giá 4 mức | luôn mở |
+| 5 | Ghép 6 cặp ở `/match` để kiểm tra ranh giới giữa các phạm trù | luôn mở |
+| 6 | Tra `/knowledge` khi cần đọc lại lý thuyết hoặc tìm phạm trù | luôn mở |
 
-Hoàn thành = đủ năm điều kiện trên. Tiến độ lưu trên máy người học.
+## 6. Thiết kế ngân hàng câu hỏi
 
-## 5b. Phần luyện
+- 20 câu/chương, đúng 4 phương án, một đáp án.
+- Mỗi phương án có một dòng giải thích riêng, bắt đầu bằng "Đúng" hoặc "Sai" — kiểm thử tự động xác
+  nhận dòng "Đúng" nằm đúng vị trí `answer`.
+- Mỗi câu có `tip` mô tả cách loại trừ (từ khoá, cặp phạm trù dễ lẫn, công thức cần nhớ).
+- Câu tính toán chỉ dùng số liệu tự đặt (ví dụ `c = 60, v = 20, m = 30` → `m′ = 150%`), không giả lập
+  số liệu doanh nghiệp.
+- Cấm chữ "đáp án đúng" trong đề — sản phẩm dạy cách lập luận, không dạy mẹo chọn đáp án.
 
-Ba chế độ luyện sinh thẳng từ dữ liệu đã có: 8 thẻ ghi nhớ (tự đánh giá bốn mức, lịch ôn giãn kiểu
-SM-2 rút gọn), ghép 6 cặp phạm trù × ứng dụng mỗi lượt (bốn lượt phủ 24 cặp), 12 câu trắc nghiệm có
-giải thích từng phương án. Điểm kinh nghiệm, cấp, chuỗi ngày và kỷ lục chỉ để duy trì nhịp quay lại —
-không quy đổi thành điểm môn học, không có bảng xếp hạng, không gửi dữ liệu lên máy chủ.
+## 7. Đánh giá
 
-## 6. Đánh giá (không chấm cách chia)
+Sản phẩm không chấm điểm môn học. Người học tự đánh giá qua: số câu đã làm, số câu đúng, chương yếu
+nhất (hàm `weakestChapter`), số thẻ đến hạn, và số lần chọn sai khi ghép. Điểm kinh nghiệm chỉ để
+giữ nhịp quay lại.
 
-Bốn tiêu chí dùng cho thảo luận nhóm hoặc tự đánh giá:
-
-1. **Nhận diện cấu trúc giá:** phân biệt được khoản nào là chi phí, khoản nào là công.
-2. **Vận dụng `m′`:** giải thích được vì sao cách chia của mình cho ra con số đó.
-3. **Phản biện:** chỉ ra được ít nhất một hệ quả trái chiều của lựa chọn cắt 5%.
-4. **Liên hệ:** nói được vì sao cùng một chiếc áo lại có hai con số `m′` (trong xưởng và toàn chuỗi).
-
-Sản phẩm cung cấp nguyên liệu cho bốn tiêu chí này, không tự cho điểm.
-
-## 7. Phân việc (1 tuần, 3–4 người)
+## 8. Phân việc (1 tuần, 3–4 người)
 
 | Ngày | Việc | Ai |
 | --- | --- | --- |
-| 1 | Chốt bảng tham chiếu ba món; rà lại bốn mục kiến thức đầu | Biên tập nội dung |
-| 2 | Rà trích dẫn, ghi số trang, kiểm "đúc kết" và "ứng dụng" | Biên tập + giảng viên hướng dẫn |
-| 3 | Kiểm giao diện trên máy thật (375 px, 1440 px), bàn phím, focus | Thiết kế + front-end |
-| 4 | Thử với 5 sinh viên, ghi thời gian từng bước | QA |
-| 5 | Sửa theo phản hồi, tập demo 4 phút, viết phần trả lời về nguồn số | Cả nhóm |
+| 1 | Chốt 6 chương, viết tóm tắt và mục tiêu từng chương | Biên tập nội dung |
+| 2 | Viết 120 câu theo chương, mỗi câu kèm 4 lời giải và 1 mẹo | Biên tập + nhóm |
+| 3 | Đối chiếu trích dẫn, tách rõ nguyên văn và phần diễn đạt | Biên tập + giảng viên hướng dẫn |
+| 4 | Kiểm giao diện trên máy thật (375 px, 1440 px), bàn phím, focus | Thiết kế + front-end |
+| 5 | Thử với 5 sinh viên, ghi tỷ lệ đúng từng chương, sửa câu gây nhiễu | QA |
 
-## 8. Kịch bản demo 4 phút
+## 9. Kịch bản demo 4 phút
 
-1. **0:00–0:40** — Mở trang chủ, đặt câu hỏi: "45.000 đồng này chia thế nào?" rồi mời giảng viên
-   tự bấm vài nút.
-2. **0:40–2:00** — Mở phần thật, chỉ vào bảng lệch và giải thích: đây là khoảng, không phải đáp án.
-3. **2:00–2:50** — Chuyển sang suất ăn qua ứng dụng, cho thấy cùng cơ chế nhưng kết luận khác: phần
-   lớn giá trị nằm ở phí kênh bán, không ở người nấu.
-4. **2:50–3:30** — Mở phần kiến thức: trích dẫn, đúc kết, ứng dụng — cho thấy nội dung lý luận không
-   bị tách khỏi ví dụ.
-5. **3:30–4:00** — Nói rõ giới hạn: số là ước lượng minh hoạ, chưa đối chiếu số trang, chưa thử với
-   sinh viên ngoài nhóm.
+1. **0:00–0:50** — Mở trang chủ, chỉ dải tiến độ, giải thích: dữ liệu chỉ nằm trong máy người học.
+2. **0:50–2:10** — Vào `/quiz`, chọn Ch.3, làm 3 câu: cho giảng viên thấy phần giải thích bốn phương
+   án và dòng "cách loại trừ".
+3. **2:10–3:00** — Sang `/review`: lật một thẻ, tự đánh giá "Mơ hồ", giải thích lịch ôn giãn.
+4. **3:00–3:30** — Sang `/match`: ghép sai một cặp để thấy nhịp rung và cách đếm lần sai.
+5. **3:30–4:00** — Mở `/knowledge#nguon`: nói rõ phần nào là trích giáo trình, phần nào do nhóm viết,
+   và những gì chưa được thẩm định.
 
-## 9. Rủi ro và cách chặn
+## 10. Rủi ro và cách chặn
 
 | Rủi ro | Cách chặn hiện có |
 | --- | --- |
-| Bị coi là bài tính có đáp án | Không điểm, không `isCorrect`, tham chiếu là khoảng, có test chặn |
-| Số liệu bị hỏi nguồn | Ghi "ước lượng minh hoạ" ngay dưới kết quả và ở trang chủ; ghi rõ trong `docs/NGUON-VA-GIOI-HAN.md` |
-| Trích dẫn sai | Ghi nguồn tại chỗ, hiện "số trang cần đối chiếu bản in", có danh sách kiểm |
-| Người học bấm qua loa | Hoàn thành cần chuỗi + cắt 5% + viết ≥ 80 ký tự |
-| Phần luyện bị hiểu là học thuộc đáp án | Câu hỏi sinh từ số liệu đang hiển thị, mỗi phương án đều có giải thích, không có ngân hàng câu hỏi cố định |
-| Một tên lớp CSS làm hỏng bố cục ở thành phần khác | Tên lớp theo hệ riêng (`stage*`, `bump`, `prac-*`), có test canh gác lớp kích thước cố định |
-| Nội dung quá tải | Khoá phạm vi ba món, bảy khoản |
+| Câu hỏi sai kiến thức | Mỗi câu có 4 lời giải giải thích lý do; kiểm thử bắt buộc lời giải khớp vị trí đáp án; danh sách rà soát trong `docs/NGUON-VA-GIOI-HAN.md` |
+| Trích dẫn bị hiểu là nguyên văn | Ghi rõ "Trích giáo trình" / "Diễn đạt theo giáo trình" ngay trên từng phạm trù |
+| Người học chỉ bấm cho hết | Sai vẫn có điểm nhưng thấp hơn; hiện giải thích cả 4 phương án; gợi ý theo mức đúng |
+| Học thuộc đáp án | Câu sinh theo chương, thứ tự xáo theo seed, thẻ và ghép dùng nội dung khác (đúc kết, ví dụ) |
+| Lỗi bố cục do trùng tên lớp CSS | Test canh gác lớp kích thước cố định và bộ chọn trùng |
+| Dữ liệu cũ gây lỗi | `migrateGame` lọc lại từng trường; đổi khoá sang `so-cai:v1` |
 
-## 10. Hướng phát triển
+## 11. Hướng phát triển
 
-- Thêm món thứ tư theo hướng dịch vụ (vé xe, gói cước) để so sánh cấu trúc giá dịch vụ với hàng hoá.
-- Chế độ nhóm: ba sinh viên chia cùng một món, so sánh ba cách chia và tranh luận chỗ lệch.
-- Bản cho giảng viên: xem phân bố cách chia của cả lớp (không thu thập dữ liệu cá nhân).
-- Mở rộng phần luyện thành đề ôn theo chương khi có ngân hàng câu hỏi đã được giảng viên duyệt.
+- Thêm chế độ "đề thi thử" 40 câu trộn sáu chương, có đồng hồ, không giới hạn lượt.
+- Xuất phiếu kết quả theo chương để sinh viên nộp kèm phần tự học.
+- Bổ sung hình ảnh/bảng số cho câu tính toán `m′`, `M`, `p′`.
+- Cho giảng viên nhập câu hỏi qua một tệp JSON có kiểm tra schema.

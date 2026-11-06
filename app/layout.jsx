@@ -8,14 +8,14 @@ import SiteHeader from '../src/components/site/SiteHeader';
 import SiteFooter from '../src/components/site/SiteFooter';
 
 export const metadata = {
-  title: 'Bóc giá — một món hàng, ai lấy phần nào? | MLN122',
+  title: 'Sổ cái MLN122 — sáu chương, 120 câu hỏi',
   description:
-    'Chia giá bán của một ly trà sữa, một chiếc áo thun, một suất ăn thành bảy khoản; gộp lại thành c, v, m; tự tính m′ và xem ai nhận phần thặng dư.',
-  keywords: ['MLN122', 'kinh tế chính trị', 'giá trị thặng dư', 'Đại học FPT'],
+    'Ôn MLN122 bằng 120 câu trắc nghiệm có giải thích từng phương án, thẻ phạm trù giãn lịch, ghép thuật ngữ và Knowledge Hub tra theo sáu chương.',
+  keywords: ['MLN122', 'kinh tế chính trị Mác – Lênin', 'trắc nghiệm', 'Đại học FPT'],
   openGraph: {
-    title: 'Bóc giá — một món hàng, ai lấy phần nào?',
+    title: 'Sổ cái MLN122 — sáu chương, 120 câu hỏi',
     description:
-      'Từ 45.000 đồng của một ly trà sữa đến c, v, m: người học tự chia tiền rồi mới đối chiếu.',
+      'Quiz theo chương, ôn thẻ phạm trù và Knowledge Hub: học MLN122 bằng cách tự trả lời trước, đọc giải thích sau.',
     locale: 'vi_VN',
     type: 'website',
   },

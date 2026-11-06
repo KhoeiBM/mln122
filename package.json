@@ -1,5 +1,5 @@
 {
-  "name": "boc-gia",
+  "name": "so-cai-mln122",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -22,5 +22,5 @@
     "jsdom": "^26.1.0",
     "vitest": "^5.1.0"
   },
-  "description": "Bóc giá — chia giá bán của một món hàng thành c, v, m cho môn MLN122 (Kinh tế chính trị Mác – Lênin), Đại học FPT. Next.js, không dùng UI kit."
+  "description": "Sổ cái MLN122 — 120 câu trắc nghiệm theo sáu chương, thẻ phạm trù giãn lịch, ghép thuật ngữ và Knowledge Hub cho môn Kinh tế chính trị Mác – Lênin (Đại học FPT). Next.js, không dùng UI kit."
 }
