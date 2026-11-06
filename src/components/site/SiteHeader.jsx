@@ -13,6 +13,7 @@ export default function SiteHeader() {
         </Link>
         <nav className="nav" aria-label="Các phần của sản phẩm">
           <Link href="/">Ba món</Link>
+          <Link href="/luyen">Luyện</Link>
           <Link href="/kien-thuc">Kiến thức và nguồn</Link>
         </nav>
       </div>

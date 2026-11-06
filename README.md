@@ -13,7 +13,7 @@ tham chiếu minh hoạ, rồi hỏi ai chịu chi phí.
 ```bash
 npm install
 npm run dev     # http://localhost:3000
-npm test        # 34 test
+npm test        # 66 test
 npm run build
 ```
 
@@ -26,6 +26,7 @@ npm run build
 | `/boc/ao-thun` | Áo thun có thương hiệu 250.000đ |
 | `/boc/suat-an` | Suất ăn đặt qua ứng dụng 35.000đ |
 | `/kien-thuc` | Tám phạm trù: trích dẫn, nói lại, đúc kết, ứng dụng vào cả ba món; mục nguồn và giới hạn |
+| `/luyen` | Ba chế độ luyện: thẻ ghi nhớ, ghép cặp, trắc nghiệm |
 
 Tất cả là trang tĩnh, không backend, không tài khoản.
 
@@ -43,6 +44,26 @@ Tất cả là trang tĩnh, không backend, không tài khoản.
 
 **Điều kiện hoàn thành:** đủ 100% + đã mở phần thật + đã xem chuỗi giá trị + đã chọn chỗ cắt 5% +
 đã viết ≥ 80 ký tự. Tiến độ lưu ở `localStorage` với khoá `boc-gia:v1`.
+
+
+## Phần luyện (`/luyen`)
+
+Ba chế độ, tất cả đều lấy nội dung từ chính tám phạm trù và số liệu ba món — không có ngân hàng câu
+hỏi riêng, nên không có gì để học thuộc lòng:
+
+- **Thẻ ghi nhớ** — 8 thẻ, mỗi thẻ một phạm trù. Mặt trước chỉ có tên phạm trù; mặt sau mở ra trích
+  dẫn, phần nói lại, đúc kết và ứng dụng vào một món. Tự đánh giá bốn mức (Quên / Mơ hồ / Nhớ /
+  Chắc), lịch ôn giãn theo kiểu SM-2 rút gọn: khoảng nghỉ nhân với hệ số dễ, "Quên" đưa thẻ về ngay
+  hôm nay và giảm hệ số, "Chắc" giãn ra và tăng hệ số.
+- **Ghép cặp** — 6 cặp mỗi lượt, ghép tên phạm trù với một dòng ứng dụng cụ thể trong một món; bốn
+  lượt phủ hết 24 cặp. Chọn sai thì đếm lần sai, không phạt điểm.
+- **Trắc nghiệm** — 12 câu sinh trực tiếp từ dữ liệu: khoản nào là `v`, khoản nào là `c`, khoản nào
+  lớn nhất theo khoảng tham chiếu, `m′` của khoảng tham chiếu xấp xỉ bao nhiêu. Mỗi phương án có một
+  dòng giải thích vì sao đúng hoặc sai.
+
+Điểm kinh nghiệm (10đ/câu đúng, 5đ/thẻ, 3đ/cặp, 20đ/kết thúc lượt), cấp (mỗi 100đ), chuỗi ngày học
+và kỷ lục cá nhân lưu ở `localStorage` với khoá `boc-gia:game:v1`. Không tài khoản, không gửi dữ
+liệu đi đâu, không quy đổi thành điểm môn học.
 
 ## Kiến thức
 
@@ -66,7 +87,7 @@ Một chuyển động duy nhất: khối "Phần thật" trượt ra khi mở k
 
 ## Kiểm thử
 
-`npm test` chạy 34 test trong 3 tệp:
+`npm test` chạy 66 test trong 7 tệp:
 
 - `src/lib/split.test.js` — cộng dồn không vượt 100%, gộp `c/v/m`, `m′` (kể cả trường hợp `v = 0`),
   khoảng tham chiếu, điều kiện hoàn thành, đọc lại dữ liệu cũ/hỏng, định dạng tiền.
@@ -75,6 +96,14 @@ Một chuyển động duy nhất: khối "Phần thật" trượt ra khi mở k
   chặn chữ "đáp án đúng"** trong nội dung.
 - `src/components/receipt/receipt.test.jsx` — luồng thật: tăng phần trăm, chặn ở 100%, nút mở phần
   thật bị khoá khi chưa đủ, mở ra thấy `m′`, lưu localStorage, phần kiến thức có trích dẫn.
+- `src/lib/game.test.js` — chuỗi ngày (nối tiếp / đứt / cùng ngày), khoảng nghỉ thẻ theo bốn mức tự
+  đánh giá, danh sách thẻ đến hạn, đọc lại dữ liệu cũ và dữ liệu hỏng, kỷ lục.
+- `src/lib/quiz.test.js` — mỗi câu đúng một đáp án trong bốn phương án, câu về `v`/`c`/khoản lớn
+  nhất/`m′` khớp số liệu, sinh câu hỏi tất định, bốn lượt ghép phủ hết 24 cặp.
+- `src/lib/classnames.test.js` — **canh gác tên lớp CSS**: lớp đặt kích thước cố định (`width` +
+  `height` px) không được dùng ở hai tệp khác nhau, ba giai đoạn trang chủ dùng hệ tên `stage*` riêng,
+  nút tăng/giảm chỉ dùng `bump`. Thêm sau lỗi bản deploy: `.step` từng vừa là nút 40×40 px vừa là thẻ
+  giai đoạn, làm thẻ bị bóp còn 40 px và chữ chồng lên nhau.
 
 ## Cấu trúc
 
@@ -85,12 +114,17 @@ app/
   globals.css                  toàn bộ hệ thống thiết kế
   boc/[id]/page.jsx            trang một món (SSG theo id)
   kien-thuc/page.jsx           phần kiến thức và nguồn
+  luyen/page.jsx               ba chế độ luyện
 src/
   content/items.js             ba món: khoản, tham chiếu, chuỗi, lựa chọn cắt 5%
   content/concepts.js          tám phạm trù: trích dẫn, đúc kết, ứng dụng
   lib/split.js                 mô hình cách chia (hàm thuần)
   lib/useSplit.js              đọc/ghi localStorage
+  lib/game.js                  điểm kinh nghiệm, chuỗi ngày, lịch ôn thẻ (hàm thuần)
+  lib/useGame.js               đọc/ghi tiến độ luyện trong localStorage
+  lib/quiz.js                  sinh câu hỏi và lượt ghép từ dữ liệu ba món
   components/receipt/…         tờ hoá đơn, thanh tiền, từng khoản, danh sách món
+  components/practice/…        dải tiến độ, thẻ ghi nhớ, ghép cặp, trắc nghiệm
 docs/
   de-cuong-san-pham.md         thuyết minh, phân việc, kịch bản demo
   NGUON-VA-GIOI-HAN.md         nguồn từng phần và những gì chưa kiểm chứng
@@ -105,5 +139,7 @@ cũ (kịch bản quyết định, hai mốc lịch sử, hồ sơ in ấn) vì 
 ## Giới hạn
 
 Khoảng tham chiếu là ước lượng minh hoạ; trích dẫn giáo trình chưa đối chiếu số trang; nội dung chưa
-được giảng viên thẩm định; chưa kiểm thử với người dùng thật và chưa kiểm tra trên máy thật ở 375 px.
+được giảng viên thẩm định; chưa kiểm thử với người dùng thật. Bố cục màn hẹp được soát bằng quy tắc
+CSS và canh gác tên lớp chứ chưa chụp ảnh trên máy thật; lịch ôn thẻ và điểm kinh nghiệm nằm trên máy
+người học nên xoá dữ liệu trình duyệt là mất.
 Chi tiết ở [`docs/NGUON-VA-GIOI-HAN.md`](docs/NGUON-VA-GIOI-HAN.md).

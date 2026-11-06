@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import ItemGrid from '../src/components/receipt/ItemGrid';
+import XpStrip from '../src/components/practice/XpStrip';
 import { ITEMS } from '../src/content/items';
 import { formatVnd } from '../src/lib/split';
 
@@ -49,12 +50,12 @@ export default function HomePage() {
         </p>
       </section>
 
-      <section className="steps" aria-label="Ba bước của một lần bóc">
+      <section className="stages" aria-label="Ba bước của một lần bóc">
         {STEPS.map((step) => (
-          <article className="step" key={step.num}>
-            <p className="step-num">{step.num}</p>
-            <h2 className="step-name">{step.name}</h2>
-            <p className="step-body">{step.body}</p>
+          <article className="stage" key={step.num}>
+            <p className="stage-num">{step.num}</p>
+            <h2 className="stage-name">{step.name}</h2>
+            <p className="stage-body">{step.body}</p>
           </article>
         ))}
       </section>
@@ -64,6 +65,26 @@ export default function HomePage() {
           Ba món để bóc
         </h2>
         <ItemGrid />
+      </section>
+
+      <section className="section" aria-labelledby="luyen">
+        <h2 id="luyen" className="section-title">
+          Luyện nhanh
+        </h2>
+        <p className="section-lead">
+          Ba chế độ luyện lấy từ chính tám phạm trù và số liệu ba món: thẻ ghi nhớ có lịch ôn giãn,
+          ghép cặp phạm trù với dòng ứng dụng, trắc nghiệm có giải thích từng phương án. Điểm kinh
+          nghiệm và chuỗi ngày chỉ để bạn thấy mình có quay lại đều không.
+        </p>
+        <XpStrip />
+        <div className="hero-actions">
+          <Link className="btn btn-primary" href="/luyen">
+            Mở phần luyện
+          </Link>
+          <Link className="btn btn-ghost" href="/kien-thuc">
+            Xem tám phạm trù
+          </Link>
+        </div>
       </section>
 
       <section className="section why" aria-labelledby="vi-sao">

@@ -15,7 +15,7 @@ export default function BucketRow({ item, bucket, value, deviation, revealed, on
         <div className="row-controls">
           <button
             type="button"
-            className="step"
+            className="bump"
             aria-label={`Giảm 5 phần trăm cho ${bucket.label}`}
             onClick={() => onChange(value - 5)}
             disabled={value === 0}
@@ -24,7 +24,7 @@ export default function BucketRow({ item, bucket, value, deviation, revealed, on
           </button>
           <button
             type="button"
-            className="step"
+            className="bump"
             aria-label={`Giảm 1 phần trăm cho ${bucket.label}`}
             onClick={() => onChange(value - 1)}
             disabled={value === 0}
@@ -37,7 +37,7 @@ export default function BucketRow({ item, bucket, value, deviation, revealed, on
           </span>
           <button
             type="button"
-            className="step"
+            className="bump"
             aria-label={`Tăng 1 phần trăm cho ${bucket.label}`}
             onClick={() => onChange(value + 1)}
           >
@@ -45,7 +45,7 @@ export default function BucketRow({ item, bucket, value, deviation, revealed, on
           </button>
           <button
             type="button"
-            className="step"
+            className="bump"
             aria-label={`Tăng 5 phần trăm cho ${bucket.label}`}
             onClick={() => onChange(value + 5)}
           >
