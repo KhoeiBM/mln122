@@ -1,83 +1,68 @@
 # Nguồn và giới hạn
 
-Đọc hết tài liệu này trước khi trình bày. Mỗi mục ghi rõ cái gì đã chốt và cái gì còn phải kiểm.
+Tài liệu này ghi rõ phần nào của Sổ cái MLN122 lấy từ đâu, phần nào do nhóm viết, và những gì **chưa**
+được kiểm chứng trước khi công bố.
 
-## 1. Trích dẫn giáo trình
+## 1. Nguồn của phần lý thuyết
 
-Nguồn: **Giáo trình Kinh tế chính trị Mác – Lênin (dành cho bậc đại học, không chuyên lý luận
-chính trị)**, Nhà xuất bản Chính trị quốc gia Sự thật, 2021.
+- **Giáo trình:** *Giáo trình Kinh tế chính trị Mác – Lênin (dành cho bậc đại học, không chuyên lý
+  luận chính trị)*, NXB Chính trị quốc gia Sự thật, 2021 — sáu chương, dùng làm khung cho toàn bộ
+  sản phẩm.
+- **Trích dẫn trong Knowledge Hub (22 phạm trù):** mỗi mục có trường `verbatim`.
+  - `verbatim: true` (10 mục) — câu chữ theo cách diễn đạt phổ biến trong giáo trình. Giao diện hiện
+    "Trích giáo trình".
+  - `verbatim: false` (12 mục) — phần viết lại của nhóm. Giao diện hiện "Diễn đạt theo giáo trình" để
+    không ai trích lại như nguyên văn.
+- **Số trang:** tất cả đang để trống, giao diện hiện "số trang cần đối chiếu bản in". **Chưa đối
+  chiếu bản in lần nào.**
 
-| Phạm trù | Trạng thái |
-| --- | --- |
-| Hàng hoá và hai thuộc tính | Nội dung trích theo cách diễn đạt phổ biến — **chưa đối chiếu số trang** |
-| Giá trị hàng hoá | Như trên |
-| Chi phí sản xuất `c + v` | Như trên |
-| Tư bản bất biến / khả biến | Như trên |
-| Giá trị thặng dư | Như trên |
-| Tỷ suất giá trị thặng dư `m′ = m/v × 100%` | Công thức chốt; câu trích **chưa đối chiếu số trang** |
-| Cạnh tranh và độc quyền | Như trên |
-| Quan hệ lợi ích kinh tế | Như trên |
+## 2. Nguồn của ngân hàng câu hỏi (120 câu)
 
-**Việc phải làm:** mở bản in, ghi số trang cho từng trích dẫn, cập nhật trường `page` trong
-`src/content/concepts.js`. Khi trường này có số, giao diện tự hiện "tr. N" thay cho câu "số trang
-cần đối chiếu bản in".
+- Do nhóm biên soạn theo sáu chương; **không phải đề thi chính thức** của Đại học FPT và chưa được
+  giảng viên MLN122 thẩm định.
+- Mỗi câu gồm: đề, 4 phương án, chỉ số đáp án, 4 lời giải (một "Đúng", ba "Sai"), một dòng mẹo loại
+  trừ. Kiểm thử `src/content/questions.test.js` bắt buộc:
+  - 20 câu/chương, id duy nhất, đúng tiền tố chương;
+  - 4 phương án khác nhau, đúng một đáp án;
+  - **lời giải khớp vị trí phương án**: dòng ở `answer` bắt đầu bằng "Đúng", ba dòng còn lại "Sai";
+  - mọi câu có `tip`; đề không chứa chữ "đáp án đúng".
+- Câu tính toán dùng số liệu tự đặt (`c = 60, v = 20, m = 30` → `m′ = 150%`), không mô phỏng số liệu
+  của doanh nghiệp nào.
 
-Lưu ý: sản phẩm **không đánh số chương** ở bất kỳ đâu (theo yêu cầu của nhóm). Nếu sau này cần
-gắn lại với bài giảng, phải làm thành một bản đồ riêng, không sửa nội dung đang hiển thị.
+## 3. Nội dung không lấy từ nguồn ngoài
 
-## 2. Con số trong ba món
+- Ba ví dụ trà sữa 45.000đ, áo thun 250.000đ, suất ăn 35.000đ: **ví dụ minh hoạ**. Không phải giá
+  công bố của thương hiệu hay nền tảng nào. Ở bản trước, các con số này từng dùng cho công cụ chia
+  giá; công cụ đó đã bị gỡ và con số chỉ còn xuất hiện trong câu ví dụ.
+- Toàn bộ giao diện, hệ thống thiết kế "sổ cái", mã nguồn: do nhóm viết.
 
-Toàn bộ là **ước lượng minh hoạ** do nhóm dựng để dạy cách chia:
+## 4. Dữ liệu người học
 
-- Ly trà sữa 45.000đ: dựng theo cấu trúc chi phí của một quán nhỏ ở đô thị.
-- Áo thun 250.000đ: dựng theo cấu trúc giá của hàng may mặc có thương hiệu bán qua trung tâm
-  thương mại.
-- Suất ăn 35.000đ: dựng theo mức phí nền tảng phổ biến hiện nay.
+- Một khoá `localStorage`: `so-cai:v1`, gồm điểm, chuỗi ngày, danh sách câu đã làm, lịch ôn thẻ, kỷ
+  lục. Không có cookie, không có API, không gửi dữ liệu đi đâu.
+- Xoá dữ liệu trình duyệt là mất toàn bộ tiến độ. Không có chức năng khôi phục.
 
-Không dùng số liệu của một quán, thương hiệu hay nền tảng cụ thể nào. Trung điểm các khoảng của
-mỗi món cộng lại đúng 100% (có test kiểm tra), nên nếu sửa một khoảng thì phải sửa các khoảng còn
-lại cho khớp.
+## 5. Kiểm thử hiện có
 
-Nếu sau này thay bằng số thật: phải ghi nguồn ngay tại món đó và bỏ nhãn "ước lượng minh hoạ" ở
-trang chủ, mục "Con số lấy từ đâu".
+`npm test` → 40 test / 7 tệp (nội dung câu hỏi, chọn câu và tiến độ, XP và lịch ôn, luồng quiz, luồng
+thẻ, luồng ghép, canh gác tên lớp CSS). `npm run build` → 14 trang tĩnh, gồm 6 trang chương SSG.
 
-## 3. Điều sản phẩm cố ý không làm
+## 6. Việc phải làm trước khi công bố
 
-- **Không chấm điểm cách chia.** Không có điểm, không xếp hạng, không có trường `isCorrect`
-  (có test chặn chữ "đáp án đúng" trong nội dung).
-- **Không dùng ảnh.** Toàn bộ là chữ, số và đường kẻ, nên không có vấn đề bản quyền hình ảnh.
-- **Không dựng số liệu theo doanh nghiệp thật**, để tránh tranh luận về một tổ chức cụ thể.
+1. Đối chiếu số trang của 10 trích dẫn `verbatim` với bản in; nếu không khớp thì chuyển sang
+   `verbatim: false`.
+2. Nhờ giảng viên đọc 120 câu: ưu tiên chương 3 (giá trị thặng dư) và chương 5 (đặc trưng kinh tế thị
+   trường định hướng XHCN) vì đây là hai chương dễ sai câu chữ nhất.
+3. Thử với ít nhất 5 sinh viên: ghi tỷ lệ đúng từng chương, câu nào dưới 30% đúng thì viết lại đề.
+4. Kiểm giao diện trên máy thật ở 375 px và 1440 px: trang chủ, một trang chương, một lượt quiz có
+   giải thích, một lượt ghép, Knowledge Hub khi lọc theo chương.
+5. Kiểm bàn phím: tab qua các chip chọn chương, chọn phương án, lật thẻ, chọn mức tự đánh giá.
+6. Rà lại câu chữ chính trị ở chương 5 theo văn kiện hiện hành; không dùng số liệu thống kê chưa dẫn
+   nguồn.
 
-## 4. Nguồn thiết kế
+## 7. Điều đã biết là chưa hoàn hảo
 
-- **MengToFrontend audit** (Kappaemme-git/MengToFrontend): kiểm giãn chữ, dùng tư liệu thật thay ảnh
-  AI, kiểm cả viewport desktop và mobile, báo cáo theo dạng "launch readiness / top fixes".
-- **Anthropic `frontend-design` skill**: thiết kế bắt nguồn từ đối tượng (hoá đơn), lập kế hoạch
-  token trước khi viết CSS, tránh các dấu hiệu giao diện mặc định của AI, dành độ mạnh cho một chỗ,
-  giữ sàn chất lượng (mobile, focus rõ, reduced motion).
-
-## 5. Giấy phép
-
-- Phông chữ: **Barlow Condensed**, **Be Vietnam Pro** — SIL Open Font License 1.1, cài qua
-  `@fontsource`, tự lưu trữ, không gọi Google Fonts.
-- Mã nguồn: chưa gắn giấy phép; nhóm quyết định trước khi công khai.
-
-## 6. Những gì chưa kiểm chứng
-
-- Chưa có giảng viên MLN122 đọc và duyệt nội dung, đặc biệt phần trích dẫn.
-- Chưa đối chiếu số trang của tám trích dẫn.
-- Chưa thử với sinh viên ngoài nhóm: chưa có số liệu về thời gian thực tế (ước lượng 4 phút/món là
-  ước lượng thiết kế).
-- Chưa kiểm tra giao diện trên máy thật ở 375 px; mới kiểm bằng CSS và HTML server.
-- Chưa kiểm thử với trình đọc màn hình; đã có skip link, `aria-live`, nhãn nút đầy đủ
-  ("Tăng 5 phần trăm cho Nguyên liệu, hàng nhập"), nhưng chưa audit bằng axe hay screen reader thật.
-
-## 7. Danh sách kiểm trước khi công bố
-
-- [ ] Ghi số trang cho tám trích dẫn, cập nhật `page` trong `concepts.js`.
-- [ ] Giảng viên đọc và duyệt toàn bộ nội dung, nhất là phần "Đúc kết" và "Ứng dụng".
-- [ ] Rà lại ba bảng tham chiếu: trung điểm vẫn cộng 100%, khoảng vẫn hợp lý.
-- [ ] Thử với 5 sinh viên, ghi thời gian từng bước, sửa chỗ gây bỏ dở.
-- [ ] Kiểm 375 px và 1440 px trên máy thật.
-- [ ] Kiểm bàn phím: Tab qua bảy hàng, bốn nút mỗi hàng, nút mở kết quả.
-- [ ] Kiểm lại toàn bộ liên kết nội bộ và tiêu đề trang.
+- Bộ 120 câu do một nhóm sinh viên viết trong thời gian ngắn, chắc chắn còn câu chưa thật sắc.
+- Lịch ôn là SM-2 rút gọn (một hệ số `ease`, bốn mức), không phải bản đầy đủ.
+- Chưa có ảnh, bảng biểu hay sơ đồ; các câu về chuỗi giá trị phải diễn đạt bằng chữ.
+- Chưa có chế độ thi thử có đồng hồ; chưa có xuất kết quả.

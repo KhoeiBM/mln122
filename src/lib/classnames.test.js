@@ -1,7 +1,6 @@
 // Canh gác lỗi đã từng xảy ra trên bản deploy: một tên lớp CSS dùng chung cho hai
-// thành phần khác nhau. Lớp .step từng đặt width/height 40px cho nút tăng/giảm, và
-// vô tình bóp ba thẻ giai đoạn ở trang chủ thành ô 40px, chữ chồng lên nhau.
-// Kiểm thử jsdom không thấy được lỗi bố cục, nên lớp bảo vệ phải nằm ở tên lớp.
+// thành phần khác nhau. Kiểm thử jsdom không thấy được lỗi bố cục, nên lớp bảo vệ
+// phải nằm ở tên lớp.
 
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
@@ -26,7 +25,6 @@ function sourceFiles() {
 }
 
 // Duyệt theo độ sâu ngoặc để biết khối nào nằm trong @media.
-// Bỏ chú thích trước để prelude của khối không dính chữ chú thích.
 function cssBlocks() {
   const source = CSS.replace(/\/\*[\s\S]*?\*\//g, '');
   const blocks = [];
@@ -56,8 +54,8 @@ function cssBlocks() {
   return blocks;
 }
 
-// Lớp đặt kích thước cố định theo px ở cả hai chiều: đó chính là kiểu lớp dễ gây
-// hỏng bố cục khi bị dùng lại ở một thành phần khác.
+// Lớp đặt kích thước cố định ở cả hai chiều: đúng kiểu lớp dễ làm hỏng bố cục khi bị
+// dùng lại ở một thành phần khác.
 function boxClasses() {
   const names = new Set();
   for (const { selector, body } of cssBlocks()) {
@@ -88,43 +86,35 @@ function filesUsing(className) {
   );
 }
 
-const page = SOURCES.get(join(ROOT, 'app/page.jsx'));
-const bucketRow = SOURCES.get(join(ROOT, 'src/components/receipt/BucketRow.jsx'));
-
 describe('tên lớp CSS', () => {
   it('lớp có kích thước cố định chỉ được dùng trong một tệp', () => {
     const shared = [...boxClasses()].filter((name) => filesUsing(name).length > 1);
     expect(shared).toEqual([]);
   });
 
-  it('thẻ giai đoạn ở trang chủ dùng hệ tên riêng, không phải tên nút', () => {
-    expect(page).toContain('className="stages"');
-    expect(page).toContain('stage-num');
-    expect(page).not.toMatch(/className="step\b/);
-    expect(page).not.toMatch(/\.step\b/);
-    expect(CSS).not.toMatch(/^\.step[\s,{:]/m);
-  });
-
-  it('nút tăng/giảm dùng lớp bump, chỉ một tệp định nghĩa và dùng nó', () => {
-    expect(bucketRow).toContain('className="bump"');
-    expect(CSS).toMatch(/^\.bump \{/m);
-    expect(filesUsing('bump')).toEqual(['src/components/receipt/BucketRow.jsx']);
-  });
-
-  it('ba giai đoạn xếp dọc trên màn hẹp', () => {
-    const narrow = cssBlocks().filter(
-      (block) => !block.topLevel && block.selector === '.stages',
-    );
-    expect(narrow.some((block) => /grid-template-columns:\s*1fr/.test(block.body))).toBe(true);
-  });
-
-  it('mỗi lớp giai đoạn có đúng một khối CSS', () => {
-    for (const name of ['stages', 'stage-num', 'stage-name', 'stage-body']) {
-      const blocks = cssBlocks().filter(
-        (block) =>
-          block.topLevel && block.selector.split(',').some((part) => part.trim() === `.${name}`),
-      );
-      expect(blocks, name).toHaveLength(1);
+  it('không định nghĩa trùng một bộ chọn ở cấp ngoài cùng', () => {
+    const seen = new Set();
+    const duplicated = [];
+    for (const block of cssBlocks().filter((item) => item.topLevel)) {
+      if (seen.has(block.selector)) duplicated.push(block.selector);
+      seen.add(block.selector);
     }
+    expect(duplicated).toEqual([]);
+  });
+
+  it('nút trong đề và nút trong phần ghép dùng hai hệ tên riêng', () => {
+    expect(SOURCES.get(join(ROOT, 'src/components/quiz/QuizRunner.jsx'))).toContain('quiz-option');
+    expect(SOURCES.get(join(ROOT, 'src/components/match/MatchRunner.jsx'))).toContain('match-card');
+    expect(CSS).toMatch(/^\.quiz-option \{/m);
+    expect(CSS).toMatch(/^\.match-card \{/m);
+    expect(filesUsing('quiz-option')).toEqual(['src/components/quiz/QuizRunner.jsx']);
+    expect(filesUsing('match-card')).toEqual(['src/components/match/MatchRunner.jsx']);
+  });
+
+  it('mọi lớp có kích thước cố định đều nằm trong một tệp thành phần, không phải trang', () => {
+    const onPages = [...boxClasses()].filter((name) =>
+      filesUsing(name).some((file) => file.startsWith('app/')),
+    );
+    expect(onPages).toEqual([]);
   });
 });

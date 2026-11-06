@@ -5,16 +5,17 @@ export default function SiteFooter() {
     <footer className="foot">
       <div className="shell foot-inner">
         <div>
-          <p className="foot-title">Bóc giá — một món hàng, ai lấy phần nào?</p>
+          <p className="foot-title">Sổ cái MLN122 — sáu chương, 120 câu, một cuốn sổ</p>
           <p className="foot-note">
-            Sản phẩm học tập cho môn MLN122 (Kinh tế chính trị Mác – Lênin), Đại học FPT. Khoảng
-            tham chiếu là ước lượng minh hoạ để dạy cách chia, không phải số liệu công bố của doanh
-            nghiệp nào. Sản phẩm không chấm điểm cách chia.
+            Sản phẩm học tập cho môn MLN122 (Kinh tế chính trị Mác – Lênin), Đại học FPT. Câu hỏi và
+            phạm trù do nhóm biên soạn theo giáo trình, chưa được giảng viên thẩm định. Điểm và tiến
+            độ chỉ lưu trong trình duyệt của người học.
           </p>
         </div>
         <div className="foot-links">
-          <Link href="/kien-thuc">Kiến thức và nguồn</Link>
-          <Link href="/kien-thuc#nguon">Giới hạn của sản phẩm</Link>
+          <Link href="/knowledge#nguon">Nguồn và giới hạn</Link>
+          <Link href="/learn">Sáu chương</Link>
+          <Link href="/quiz">Luyện câu hỏi</Link>
         </div>
       </div>
     </footer>
