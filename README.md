@@ -1,4 +1,4 @@
-# Chợ Kinh Tế — MLN122
+# Kinh Tế Quá Độ — MLN122
 
 Ứng dụng Next.js ôn tập Chương 5, gồm tổng hợp kiến thức, trò chơi tình huống và các chế độ ôn tập. Nội dung được biên soạn lại từ đề mẫu được cung cấp và các nguồn tham khảo ghi trong ứng dụng.
 
